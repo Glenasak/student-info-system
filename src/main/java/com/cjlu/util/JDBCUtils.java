@@ -1,38 +1,71 @@
 package com.cjlu.util;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import org.apache.commons.dbcp.BasicDataSource;
+//这个地方用的DBCP连接池来避免反复开关数据库
+//怎么用自己去查资料吧
 
 public class JDBCUtils {
-    // Derby嵌入式数据库URL（数据库文件存储在项目根目录的db文件夹下）
-    private static final String URL = "jdbc:derby:db/sims_db;create=true";
-    // 数据库用户名（嵌入式Derby默认无需用户名密码，可省略）
-    private static final String USER = "";
-    private static final String PASSWORD = "";
+    //数据库连接池对象
+    //好吧其实是我嫌弃一直打开关闭数据库这一种操作
+    private static BasicDataSource dataSource;
 
-    static {
-        try {
-            Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Derby驱动加载失败！");
-        }
+    //配珠置数据库连接池
+    static{
+        dataSource = new BasicDataSource();
+        dataSource.setUrl("jdbc:derby:MyDB;create=true");
+        //按理来说嵌入式不应该有密码
+        //但为什么我设置了一个密码呢？
+        //因为我疯啦！！！
+        dataSource.setUsername("Admin"); 
+        dataSource.setPassword("123456");
+
+        //配置连接池参数
+        //怎么依赖更新后把初始连接数量的设置去掉了？？？
+        dataSource.setMaxActive(5);
+        dataSource.setMaxIdle(5);
+        dataSource.setMinIdle(2);
+        dataSource.setMaxWait(5000);
     }
 
-    //获取数据库链接
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+    //获取数据库连接的方法
+    public static Connection getConnection() throws Exception{
+        return dataSource.getConnection();
     }
 
-    //关闭数据库链接
-    public static void closeConnection(Connection conn) {
-        if (conn != null) {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
+    //将资源归还到连接池
+    public static void closeResources(Connection connection,PreparedStatement preparedStatement,ResultSet resultSet){
+        //关闭结果集
+        try{
+            if(resultSet != null){
+                resultSet.close();
             }
+        }catch(Exception e){
+            e.printStackTrace();
         }
+        //关闭预编译语句对象
+        try{
+            if(preparedStatement != null){
+                preparedStatement.close();
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        //关闭连接对象
+        try{
+            if(connection != null){
+                connection.close();
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    //在没有结果集的时候的关闭语句
+    public static void closeResources(Connection conn, PreparedStatement pstmt) {
+        closeResources(conn, pstmt, null);
     }
 }

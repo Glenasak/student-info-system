@@ -47,7 +47,7 @@ public class Student {
     }
 
     public Integer getAge(){
-        return getAge();
+        return age;
     }
 
     public String getMajor(){

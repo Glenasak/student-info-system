@@ -46,4 +46,7 @@ public interface UserDao {
     //根据用户名获取用户ID
     public Integer getUserIdByName(String userName);
 
+    //创建用户表
+    public void createUserTable();
+
 }

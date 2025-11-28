@@ -506,4 +506,36 @@ public class UserDaoImpl implements com.cjlu.dao.UserDao {
         }
     }
 
+    @Override
+    public void createUserTable() {
+        try{
+            //获取数据库连接
+            connection = com.cjlu.util.JDBCUtils.getConnection();
+
+            //准备SQL语句
+            String sql = "CREATE TABLE users (" +
+                         "user_id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1)," +
+                         "user_name VARCHAR(50) UNIQUE NOT NULL," +
+                         "password VARCHAR(50) NOT NULL," +
+                         "role VARCHAR(20) NOT NULL," +
+                         "create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
+                         ")";
+
+            //执行创建表
+            preparedStatement = (PreparedStatement) connection.prepareStatement(sql);
+            preparedStatement.executeUpdate();
+
+            //关闭资源
+            com.cjlu.util.JDBCUtils.closeResources(connection, preparedStatement);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            //日志
+            Logger logger = LoggerFactory.getLogger(UserDaoImpl.class);
+            logger.error("Error creating users table", e);
+            //关闭资源
+            com.cjlu.util.JDBCUtils.closeResources(connection, preparedStatement);
+        }
+    }
+
 }

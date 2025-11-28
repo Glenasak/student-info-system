@@ -38,4 +38,7 @@ public interface StudentDao {
     //根据学院查询学生信息
     public List<Student> findStudentsByCollege(String collegeName);
 
+    //创建学生表
+    public void createStudentTable();
+
 }

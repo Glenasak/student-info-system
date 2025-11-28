@@ -84,7 +84,7 @@ public class Student {
         this.gender = gender;
     }
 
-    public void steAge(Integer age){
+    public void setAge(Integer age){
         this.age = age;
     }
 

@@ -1,5 +1,5 @@
 package com.cjlu.dao;
 
-public interface ScoreDao {
+public class ScoreDao {
 
 }

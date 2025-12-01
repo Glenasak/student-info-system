@@ -2,7 +2,7 @@ package com.cjlu.service;
 
 public interface UserService {
     //用户注册方法
-    void registerUser(String username, String password, String email);
+    void registerUser(String username, String password, String role);
 
     //用户登录方法
     boolean loginUser(String username, String password);

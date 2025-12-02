@@ -7,13 +7,14 @@ import com.cjlu.util.JDBCUtils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.slf4j.*;
 
 public class CourseDaoImpl implements CourseDao {
+    //日志记录器
+    private static final Logger logger = LoggerFactory.getLogger(CourseDaoImpl.class);
     //链接数据库
     Connection conn = null;
     PreparedStatement pstmt = null;
@@ -86,12 +87,12 @@ public class CourseDaoImpl implements CourseDao {
 
     @Override
     //根据课程号查询课程名
-    public String getCourseByCourseId(String courseId) {
+    public String getCourseNameByCourseId(String courseId) {
         try {
             conn = JDBCUtils.getConnection();
             String sql = "SELECT course_name FROM course WHERE  course_id=?";
             //开始查询
-            pstmt = (PreparedStatement) conn.prepareStatement(sql);
+            pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, courseId);
             ResultSet resultSet = pstmt.executeQuery();
             String course_name = null;
@@ -111,12 +112,12 @@ public class CourseDaoImpl implements CourseDao {
 
     @Override
     //根据授课老师查询课程名
-    public String getCourseByTeacher(String teacher) {
+    public String getCourseNameByTeacher(String teacher) {
         try {
             conn = JDBCUtils.getConnection();
             String sql = "SELECT course_name FROM course WHERE  teacher=?";
             //开始查询
-            pstmt = (PreparedStatement) conn.prepareStatement(sql);
+            pstmt = conn.prepareStatement(sql);
             pstmt.setString(1,teacher);
             ResultSet resultSet = pstmt.executeQuery();
             String course_name = null;
@@ -136,7 +137,7 @@ public class CourseDaoImpl implements CourseDao {
 
     @Override
     //根据学分查询课程名
-    public String getCourseByCredit(int credit) {
+    public String getCourseNameByCredit(int credit) {
         try {
             conn = JDBCUtils.getConnection();
             String sql = "SELECT course_name FROM course WHERE  credit=?";
@@ -160,7 +161,7 @@ public class CourseDaoImpl implements CourseDao {
     }
 
     @Override
-    public String getCourseBySemester(String semester) {
+    public String getCourseNameBySemester(String semester) {
         try {
             conn = JDBCUtils.getConnection();
             String sql = "SELECT course_name FROM course WHERE  semester=?";
@@ -184,8 +185,204 @@ public class CourseDaoImpl implements CourseDao {
     }
 
     @Override
-    //查询所有课程
-    public List<Map<String,Object>> getAllCourse() {
+    public List<Map<String, Object>> getCourseByCourseId(String courseId) {
+        try {
+            conn=JDBCUtils.getConnection();
+            String sql="SELECT*FROM Course WHERE course_id=?";
+            pstmt=conn.prepareStatement(sql);
+            pstmt.setString(1,courseId);
+            var resultSet=pstmt.executeQuery();
+            List<Map<String,Object>>courses=new ArrayList<>();
+
+            while (resultSet.next()){
+                Course course=new Course();
+                course.setCourseId(resultSet.getString("course_id"));
+                course.setCourseName(resultSet.getString("course_name"));
+                course.setCredit(String.valueOf(resultSet.getInt("credit")));
+                course.setTeacher(resultSet.getString("teacher"));
+                course.setSemester(resultSet.getString("semseter"));
+                courses.add((Map<String, Object>) course);
+            }
+            JDBCUtils.closeResources(conn,pstmt,resultSet);
+            return courses;
+        }catch (Exception e) {
+            logger.error("根据课程号查询课程信息时出错：", e);
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<Map<String, Object>> getCourseByCourseName(String courseName) {
+        try {
+            conn=JDBCUtils.getConnection();
+            String sql="SELECT*FROM Course WHERE courseName=?";
+            pstmt=conn.prepareStatement(sql);
+            pstmt.setString(1,courseName);
+            var resultSet=pstmt.executeQuery();
+            List<Map<String,Object>>courses=new ArrayList<>();
+
+            while (resultSet.next()){
+                Course course=new Course();
+                course.setCourseId(resultSet.getString("course_id"));
+                course.setCourseName(resultSet.getString("course_name"));
+                course.setCredit(String.valueOf(resultSet.getInt("credit")));
+                course.setTeacher(resultSet.getString("teacher"));
+                course.setSemester(resultSet.getString("semseter"));
+                courses.add((Map<String, Object>) course);
+            }
+            JDBCUtils.closeResources(conn,pstmt,resultSet);
+            return courses;
+        }catch (Exception e) {
+            logger.error("根据课程名模糊查询课程信息时出错：", e);
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<Map<String, Object>> getCourseByCredit(int credit) {
+        try {
+            conn=JDBCUtils.getConnection();
+            String sql="SELECT*FROM Course WHERE credit=?";
+            pstmt=conn.prepareStatement(sql);
+            pstmt.setInt(1,credit);
+            var resultSet=pstmt.executeQuery();
+            List<Map<String,Object>>courses=new ArrayList<>();
+
+            while (resultSet.next()){
+                Course course=new Course();
+                course.setCourseId(resultSet.getString("course_id"));
+                course.setCourseName(resultSet.getString("course_name"));
+                course.setCredit(String.valueOf(resultSet.getInt("credit")));
+                course.setTeacher(resultSet.getString("teacher"));
+                course.setSemester(resultSet.getString("semseter"));
+                courses.add((Map<String, Object>) course);
+            }
+            JDBCUtils.closeResources(conn,pstmt,resultSet);
+            return courses;
+        }catch (Exception e) {
+            logger.error("根据学分查询课程信息时出错：", e);
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<Map<String, Object>> getCourseByTeacher(String teacher) {
+        try {
+            conn=JDBCUtils.getConnection();
+            String sql="SELECT*FROM Course WHERE teacher=?";
+            pstmt=conn.prepareStatement(sql);
+            pstmt.setString(1,teacher);
+            var resultSet=pstmt.executeQuery();
+            List<Map<String,Object>>courses=new ArrayList<>();
+
+            while (resultSet.next()){
+                Course course=new Course();
+                course.setCourseId(resultSet.getString("course_id"));
+                course.setCourseName(resultSet.getString("course_name"));
+                course.setCredit(String.valueOf(resultSet.getInt("credit")));
+                course.setTeacher(resultSet.getString("teacher"));
+                course.setSemester(resultSet.getString("semseter"));
+                courses.add((Map<String, Object>) course);
+            }
+            JDBCUtils.closeResources(conn,pstmt,resultSet);
+            return courses;
+        }catch (Exception e) {
+            logger.error("根据授课老师查询课程信息时出错：", e);
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<Map<String, Object>> getCourseBySemester(String semester) {
+        try {
+            conn=JDBCUtils.getConnection();
+            String sql="SELECT*FROM Course WHERE semester=?";
+            pstmt=conn.prepareStatement(sql);
+            pstmt.setString(1,semester);
+            var resultSet=pstmt.executeQuery();
+            List<Map<String,Object>>courses=new ArrayList<>();
+
+            while (resultSet.next()){
+                Course course=new Course();
+                course.setCourseId(resultSet.getString("course_id"));
+                course.setCourseName(resultSet.getString("course_name"));
+                course.setCredit(String.valueOf(resultSet.getInt("credit")));
+                course.setTeacher(resultSet.getString("teacher"));
+                course.setSemester(resultSet.getString("semseter"));
+                courses.add((Map<String, Object>) course);
+            }
+            JDBCUtils.closeResources(conn,pstmt,resultSet);
+            return courses;
+        }catch (Exception e) {
+            logger.error("根据学期查询课程信息时出错：", e);
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<Map<String, Object>> getAllCourse() {
+        try {
+            conn=JDBCUtils.getConnection();
+            String sql="SELECT*FROM Course WHERE course";
+            pstmt=conn.prepareStatement(sql);
+            var resultSet=pstmt.executeQuery();
+            List<Map<String,Object>>courses=new ArrayList<>();
+
+            while (resultSet.next()){
+                Course course=new Course();
+                course.setCourseId(resultSet.getString("course_id"));
+                course.setCourseName(resultSet.getString("course_name"));
+                course.setCredit(String.valueOf(resultSet.getInt("credit")));
+                course.setTeacher(resultSet.getString("teacher"));
+                course.setSemester(resultSet.getString("semseter"));
+                courses.add((Map<String, Object>) course);
+            }
+            JDBCUtils.closeResources(conn,pstmt,resultSet);
+            return courses;
+        }catch (Exception e) {
+            logger.error("根据学期查询课程信息时出错：", e);
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<Map<String, Object>> getCourseByCreditRange(int minaCredit, int maxCredit) {
+        try {
+            conn=JDBCUtils.getConnection();
+            String sql="SELECT*FROM Course WHERE credit BETWEEN ? AND ?";
+            pstmt=conn.prepareStatement(sql);
+            pstmt.setInt(1,minaCredit);
+            pstmt.setInt(1,maxCredit);
+            var resultSet=pstmt.executeQuery();
+            List<Map<String,Object>>courses=new ArrayList<>();
+
+            while (resultSet.next()){
+                Course course=new Course();
+                course.setCourseId(resultSet.getString("course_id"));
+                course.setCourseName(resultSet.getString("course_name"));
+                course.setCredit(String.valueOf(resultSet.getInt("credit")));
+                course.setTeacher(resultSet.getString("teacher"));
+                course.setSemester(resultSet.getString("semseter"));
+                courses.add((Map<String, Object>) course);
+            }
+            JDBCUtils.closeResources(conn,pstmt,resultSet);
+            return courses;
+        }catch (Exception e) {
+            logger.error("根据学分范围查询课程信息时出错：", e);
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    //查询所有课程名
+    public List<Map<String,Object>> getAllCourseName() {
         try {
             conn=JDBCUtils.getConnection();
             String sql= "SELECT course_name FROM course";
@@ -197,18 +394,19 @@ public class CourseDaoImpl implements CourseDao {
                 courseInfo.put("course_name",resultSet.getString("course_name"));
             }
 
-            com.cjlu.util.JDBCUtils.closeResources(conn, pstmt, resultSet);
+            JDBCUtils.closeResources(conn, pstmt, resultSet);
 
             return courseList;
         } catch (Exception e) {
             e.printStackTrace();
             //日志
-            Logger logger = LoggerFactory.getLogger(UserDaoImpl.class);
-            logger.error("Error retrieving all users", e);
+            Logger logger = LoggerFactory.getLogger(CourseDaoImpl.class);
+            logger.error("Error retrieving all course", e);
             //关闭资源
-            com.cjlu.util.JDBCUtils.closeResources(conn, pstmt);
+            JDBCUtils.closeResources(conn, pstmt);
             return null;
         }
+
     }
 
     @Override

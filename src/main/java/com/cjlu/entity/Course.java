@@ -39,23 +39,23 @@ public class Course {
         return semester;
     }
 
-    public void setCourseId(){
-        this.courseId=courseId;
+    public void setCourseId(String courseId){
+        this.courseId= this.courseId;
     }
 
-    public void setCourseName(){
-        this.courseName=courseName;
+    public void setCourseName(String courseName){
+        this.courseName= this.courseName;
     }
 
-    public void setCredit(){
-        this.credit=credit;
+    public void setCredit(String credit){
+        this.credit= this.credit;
     }
 
-    public void setTeacher(){
-        this.teacher=teacher;
+    public void setTeacher(String teacher){
+        this.teacher= this.teacher;
     }
 
-    public void setSemester(){
+    public void setSemester(String semseter){
         this.semester=semester;
     }
 }

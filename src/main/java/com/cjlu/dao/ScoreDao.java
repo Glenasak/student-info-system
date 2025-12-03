@@ -3,18 +3,25 @@ package com.cjlu.dao;
 import java.util.Map;
 
 public interface ScoreDao {
+
     //创建成绩表
-    public void createScoreTable();
+    void createScoreTable();
+
     //添加成绩记录
-    public void addScoreRecord(int studentId, String courseCode, double score);
+    void addScoreRecord(int studentId, String courseCode, double score);
+
     //删除成绩记录
-    public void deleteScoreRecord(int studentId, String courseCode);
+    void deleteScoreRecord(int studentId, String courseCode);
+
     //更新成绩记录
-    public void updateScoreRecord(int studentId, String courseCode, double newScore);
+    void updateScoreRecord(int studentId, String courseCode, double newScore);
+
     //根据学生ID和课程代码获取成绩记录
-    public Integer getScoreRecord(int studentId, String courseCode);
+    Integer getScoreRecord(int studentId, String courseCode);
+
     //查询某学生的所有成绩记录
-    public Map<String, Double> getAllScoresByStudentId(int studentId);
+    Map<String, Double> getAllScoresByStudentId(int studentId);
+
     //查询某课程的所有学生成绩记录
-    public Map<Integer, Double> getAllScoresByCourseCode(String courseCode);
+    Map<Integer, Double> getAllScoresByCourseCode(String courseCode);
 }

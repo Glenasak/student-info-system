@@ -73,7 +73,7 @@
 | phone          | VARCHAR(11) | UNIQUE                            | 手机号（可选）       |
 | email          | VARCHAR(50) | UNIQUE                            | 邮箱（可选）         |
 
-### 3. 课程表（courses）
+### 3. 课程表（course）
 
 | 字段名      | 类型        | 约束                        | 说明                   |
 | ----------- | ----------- | --------------------------- | ---------------------- |
@@ -89,7 +89,7 @@
 | ---------- | ----------- | ---------------------------------------------------- | --------------- |
 | score_id   | INT         | PRIMARY KEY AUTOINCREMENT                            | 成绩 ID（自增） |
 | student_id | VARCHAR(10) | NOT NULL FOREIGN KEY REFERENCES students(student_id) | 学号（外键）    |
-| course_id  | VARCHAR(10) | NOT NULL FOREIGN KEY REFERENCES courses(course_id)   | 课程号（外键）  |
+| course_id  | VARCHAR(10) | NOT NULL FOREIGN KEY REFERENCES course(course_id)   | 课程号（外键）  |
 | score      | INT         | CHECK (score >= 0 AND score <= 100)                  | 分数            |
 | exam_date  | DATE        | NOT NULL                                             | 考试日期        |
 
@@ -121,7 +121,7 @@ CREATE TABLE students (
 );
 
 -- 创建课程表
-CREATE TABLE courses (
+CREATE TABLE course (
     course_id VARCHAR(10) PRIMARY KEY,
     course_name VARCHAR(50) NOT NULL,
     credit INT NOT NULL CHECK (credit > 0),
@@ -137,7 +137,7 @@ CREATE TABLE scores (
     score INT CHECK (score >= 0 AND score <= 100),
     exam_date DATE NOT NULL,
     FOREIGN KEY (student_id) REFERENCES students(student_id),
-    FOREIGN KEY (course_id) REFERENCES courses(course_id),
+    FOREIGN KEY (course_id) REFERENCES course(course_id),
     UNIQUE (student_id, course_id) -- 一个学生一门课只能有一个成绩
 );
 

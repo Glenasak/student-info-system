@@ -24,6 +24,9 @@ public interface CourseService {
     //根据学分查询课程名
     String getCourseNameByCredit(int credit);
 
+    //根据学分查询课程名
+    String getCourseNameBySemester(String semester);
+
     //根据课程号查询课程
     List<Map<String,Object>> getCourseByCourseId(String courseId);
 
@@ -34,7 +37,7 @@ public interface CourseService {
     List<Map<String,Object>>getCourseByCredit(int credit);
 
     //根据学分范围查询课程
-    List<Map<String,Object>>getCourseByCreditRange(int minaCredit,int maxCredit);
+    List<Map<String,Object>>getCourseByCreditRange(int minCredit, int maxCredit);
 
     //根据授课老师查询课程
     List<Map<String,Object>>getCourseByTeacher(String teacher);

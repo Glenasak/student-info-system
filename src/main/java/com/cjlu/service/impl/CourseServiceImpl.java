@@ -1,5 +1,6 @@
 package com.cjlu.service.impl;
 
+import com.cjlu.dao.CourseDao;
 import com.cjlu.entity.Course;
 import com.cjlu.service.CourseService;
 import org.slf4j.Logger;
@@ -10,10 +11,14 @@ import java.util.Map;
 
 public class CourseServiceImpl implements CourseService {
     //日志记录器
-    private static final Logger logger = LoggerFactory.getLogger(StudentServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(CourseServiceImpl.class);
 
     //数据访问对象
-    private CourseServiceImpl courseDao=new CourseServiceImpl();
+    private CourseDao courseDao;
+
+    public CourseServiceImpl(CourseDao courseDao) {
+        this.courseDao = courseDao;
+    }
 
     public void addCourse(Course course){
         try {
@@ -84,6 +89,18 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public String getCourseNameBySemester(String semester) {
+        try {
+            String course = courseDao.getCourseNameBySemester(semester);
+            logger.info("通过学期查询课程名成功: {}", semester);
+            return course;
+        } catch (Exception e) {
+            logger.error("通过学期查询课程名失败: {}", semester, e);
+            throw e;
+        }
+    }
+
+    @Override
     public List<Map<String, Object>> getCourseByCourseId(String courseId) {
         try {
             List<Map<String, Object>> course = courseDao.getCourseByCourseId(courseId);
@@ -120,13 +137,13 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<Map<String, Object>> getCourseByCreditRange(int minaCredit, int maxCredit) {
+    public List<Map<String, Object>> getCourseByCreditRange(int minCredit, int maxCredit) {
         try {
-            List<Map<String, Object>> course = courseDao.getCourseByCreditRange(minaCredit,maxCredit);
-            logger.info("通过学分范围查询课程成功: {},{}", minaCredit,maxCredit);
+            List<Map<String, Object>> course = courseDao.getCourseByCreditRange(minCredit,maxCredit);
+            logger.info("通过学分范围查询课程成功: {},{}", minCredit,maxCredit);
             return course;
         } catch (Exception e) {
-            logger.error("通过学分范围查询课程失败: {},{}", minaCredit,maxCredit, e);
+            logger.error("通过学分范围查询课程失败: {},{}", minCredit,maxCredit, e);
             throw e;
         }
     }

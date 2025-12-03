@@ -52,7 +52,6 @@ public interface CourseDao{
     List<Map<String,Object>> getAllCourseName();
 
     //根据Course类的属性创建课程表
-    void creatCourseTable();
-
+    void createCourseTable();
 
 }

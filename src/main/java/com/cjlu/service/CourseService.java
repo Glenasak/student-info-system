@@ -48,5 +48,8 @@ public interface CourseService {
     //查询所有课程
     List<Map<String,Object>> getAllCourse();
 
+    //根据Course类的属性创建课程表
+    void createCourseTable();
+
 
 }

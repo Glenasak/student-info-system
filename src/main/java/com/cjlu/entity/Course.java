@@ -40,22 +40,20 @@ public class Course {
     }
 
     public void setCourseId(String courseId){
-        this.courseId= this.courseId;
+        this.courseId=courseId;
     }
 
     public void setCourseName(String courseName){
-        this.courseName= this.courseName;
+        this.courseName=courseName;
     }
 
-    public void setCredit(String credit){
-        this.credit= this.credit;
+    public void setCredit(Integer credit){
+        this.credit=credit;
     }
 
     public void setTeacher(String teacher){
-        this.teacher= this.teacher;
+        this.teacher=teacher;
     }
 
-    public void setSemester(String semseter){
-        this.semester=semester;
-    }
+    public void setSemester(String semester){this.semester=semester;}
 }

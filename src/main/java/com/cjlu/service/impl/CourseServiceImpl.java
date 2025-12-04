@@ -163,7 +163,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<Map<String, Object>> getCourseByTeacher(String teacher) {
         try {
-            List<Map<String, Object>> course = courseDao.getCourseBySemester(teacher);
+            List<Map<String, Object>> course = courseDao.getCourseByTeacher(teacher);
             logger.info("通过授课老师查询课程成功: {}", teacher);
             return course;
         } catch (Exception e) {
@@ -181,6 +181,17 @@ public class CourseServiceImpl implements CourseService {
         } catch (Exception e) {
             logger.error("查询所有课程失败", e);
             throw e;
+        }
+    }
+
+    @Override
+    public void createCourseTable() {
+        try {
+            courseDao.createCourseTable();
+            logger.info("创建课程表成功！");
+        } catch (Exception e) {
+            logger.error("创建课程表失败", e);
+            throw new RuntimeException("创建课程表失败，请联系管理员", e);
         }
     }
 }

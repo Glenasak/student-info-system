@@ -46,7 +46,7 @@ public interface CourseDao{
     List<Map<String,Object>> getAllCourse();
 
     //根据学分范围查询课程
-    List<Map<String,Object>>getCourseByCreditRange(int minaCredit,int maxCredit);
+    List<Map<String,Object>>getCourseByCreditRange(int minCredit, int maxCredit);
 
     //查询所有课程名
     List<Map<String,Object>> getAllCourseName();

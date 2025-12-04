@@ -1,5 +1,13 @@
 package com.cjlu.ui;
 
+import com.cjlu.dao.CourseDao;
+import com.cjlu.dao.impl.CourseDaoImpl;
+import com.cjlu.entity.Course;
+import com.cjlu.service.CourseService;
+import com.cjlu.service.impl.CourseServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.awt.CardLayout;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -14,12 +22,83 @@ import javax.swing.table.DefaultTableModel;
  * @author 24825
  */
 public class CourseManagerFrame extends javax.swing.JFrame {
+    // 日志记录器
+    private static final Logger logger = LoggerFactory.getLogger(CourseManagerFrame.class);
+    //注入Service层
+    private final CourseService courseService;
+    //表格模型
+    private final DefaultTableModel tableModel;
 
     /**
      * Creates new form CourseManagerFrame
      */
     public CourseManagerFrame() {
         initComponents();
+        //初始化Service层和模型
+        CourseDao courseDao=new CourseDaoImpl();
+        this.courseService =new CourseServiceImpl(courseDao);
+        this.tableModel =(DefaultTableModel) TableCourse.getModel();
+        //启动时加载所有课程数据
+        initCourseTable();
+        //启动时加载所有课程数据到表格
+        loadAllCourses();
+    }
+
+    /**
+     * 初始化课程表
+     */
+    private void initCourseTable() {
+        try {
+            courseService.createCourseTable();
+            logger.info("课程表初始化成功");
+        } catch (Exception e) {
+            logger.error("课程表初始化失败", e);
+            JOptionPane.showMessageDialog(this, "课程表初始化失败：" + e.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * 加载所有课程数据到表格
+     */
+    private void loadAllCourses() {
+        try {
+            // 清空表格原有数据
+            tableModel.setRowCount(0);
+            // 调用Service层查询所有课程
+            var courses = courseService.getAllCourse();
+            // 填充数据到表格
+            for (var courseMap : courses) {
+                tableModel.addRow(new Object[]{
+                        courseMap.get("course_id"),
+                        courseMap.get("course_name"),
+                        courseMap.get("credit"),
+                        courseMap.get("teacher"),
+                        courseMap.get("semester")
+                });
+            }
+            logger.info("加载课程数据成功，共{}条", courses.size());
+        } catch (Exception e) {
+            logger.error("加载课程数据失败", e);
+            JOptionPane.showMessageDialog(this, "加载课程失败：" + e.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    /**
+     * 数据校验：非空检查
+     */
+    private boolean isEmpty(String str) {
+        return str == null || str.trim().isEmpty();
+    }
+
+    /**
+     * 数据校验：数字检查
+     */
+    private boolean isNumber(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     /**
@@ -435,14 +514,40 @@ public class CourseManagerFrame extends javax.swing.JFrame {
             return;
         }
 
-        // 更新课程列表表格
-        DefaultTableModel model = (DefaultTableModel) TableCourse.getModel();
-        model.addRow(new Object[]{courseId, courseName, Integer.parseInt(credit), teacher, semester});
+        if (!isNumber(credit)) {
+            JOptionPane.showMessageDialog(this, "学分必须是数字！");
+            return;
+        }
+        int credits = Integer.parseInt(credit);
+        if (credits < 0) {
+            JOptionPane.showMessageDialog(this, "学分不能为负数！");
+            return;
+        }
 
-        // 切回列表卡片
-        CardLayout cl = (CardLayout) CardPanel1.getLayout();
-        cl.show(CardPanel1, "list");
+        // 封装Course对象
+        Course course = new Course();
+        course.setCourseId(courseId);
+        course.setCourseName(courseName);
+        course.setCredit(credits);
+        course.setTeacher(teacher);
+        course.setSemester(semester);
+
+        try {
+            // 调用Service层新增课程
+            courseService.addCourse(course);
+            JOptionPane.showMessageDialog(this, "课程新增成功！");
+            // 刷新表格
+            loadAllCourses();
+            // 切回列表卡片
+            CardLayout cl = (CardLayout) CardPanel1.getLayout();
+            cl.show(CardPanel1, "list");
+            logger.info("新增课程成功，课程号：{}", courseId);
+        } catch (Exception e) {
+            logger.error("新增课程失败，课程号：{}", courseId, e);
+            JOptionPane.showMessageDialog(this, "新增课程失败：" + e.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
+        }
     }
+
 
     private void txtCourseID1ActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
@@ -461,18 +566,46 @@ public class CourseManagerFrame extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "必填项不能为空！");
             return;
         }
+        if (!isNumber(credit)) {
+            JOptionPane.showMessageDialog(this, "学分必须是数字！");
+            return;
+        }
+        int credits = Integer.parseInt(credit);
+        if (credits < 0) {
+            JOptionPane.showMessageDialog(this, "学分不能为负数！");
+            return;
+        }
+
 
         // 更新表格选中行
         int selectedRow = TableCourse.getSelectedRow();
-        DefaultTableModel model = (DefaultTableModel) TableCourse.getModel();
-        model.setValueAt(courseName, selectedRow, 1);
-        model.setValueAt(Integer.parseInt(credit), selectedRow, 2);
-        model.setValueAt(teacher, selectedRow, 3);
-        model.setValueAt(semester, selectedRow, 4);
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "请先选择要修改的课程！");
+            return;
+        }
 
-        // 切回列表卡片fffff
-        CardLayout cl = (CardLayout) CardPanel1.getLayout();
-        cl.show(CardPanel1, "list");
+        // 封装Course对象
+        Course course = new Course();
+        course.setCourseId(courseId);
+        course.setCourseName(courseName);
+        course.setCredit(credits);
+        course.setTeacher(teacher);
+        course.setSemester(semester);
+
+        try {
+            // 调用Service层更新课程
+            courseService.updateCourse(course);
+            JOptionPane.showMessageDialog(this, "课程修改成功！");
+            // 刷新表格
+            loadAllCourses();
+            // 切回列表卡片
+            CardLayout cl = (CardLayout) CardPanel1.getLayout();
+            cl.show(CardPanel1, "list");
+            logger.info("修改课程成功，课程号：{}", courseId);
+        } catch (Exception e) {
+            logger.error("修改课程失败，课程号：{}", courseId, e);
+            JOptionPane.showMessageDialog(this, "修改课程失败：" + e.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void btnAddBackActionPerformed(java.awt.event.ActionEvent evt) {
@@ -492,6 +625,20 @@ public class CourseManagerFrame extends javax.swing.JFrame {
     }
 
     private void btnListUpdateActionPerformed(java.awt.event.ActionEvent evt) {
+        // 校验是否选中行
+        int selectedRow = TableCourse.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "请先选择要修改的课程！");
+            return;
+        }
+
+        // 回显选中行数据到修改界面
+        txtCourseID1.setText(tableModel.getValueAt(selectedRow, 0).toString());
+        txtCourseName1.setText(tableModel.getValueAt(selectedRow, 1).toString());
+        txtCourseCredit1.setText(tableModel.getValueAt(selectedRow, 2).toString());
+        txtCourseTeacher1.setText(tableModel.getValueAt(selectedRow, 3).toString());
+        txtCourseSemester1.setText(tableModel.getValueAt(selectedRow, 4).toString());
+
         CardLayout cl = (CardLayout) CardPanel1.getLayout();
         cl.show(CardPanel1, "update"); // 切回课程列表卡片
     }
@@ -502,7 +649,33 @@ public class CourseManagerFrame extends javax.swing.JFrame {
     }
 
     private void btnListCheckActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        String keyword = jTextField1.getText().trim();
+        if (isEmpty(keyword)) {
+            // 关键词为空，加载所有课程
+            loadAllCourses();
+            return;
+        }
+
+        try {
+            // 清空表格
+            tableModel.setRowCount(0);
+            // 调用Service层模糊查询
+            var courses = courseService.getCourseByCourseName(keyword);
+            // 填充数据
+            for (var courseMap : courses) {
+                tableModel.addRow(new Object[]{
+                        courseMap.get("course_id"),
+                        courseMap.get("course_name"),
+                        courseMap.get("credit"),
+                        courseMap.get("teacher"),
+                        courseMap.get("semester")
+                });
+            }
+            logger.info("搜索课程成功，关键词：{}，共{}条", keyword, courses.size());
+        } catch (Exception e) {
+            logger.error("搜索课程失败，关键词：{}", keyword, e);
+            JOptionPane.showMessageDialog(this, "搜索课程失败：" + e.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void btnListDeleteActionPerformed(java.awt.event.ActionEvent evt) {
@@ -515,6 +688,20 @@ public class CourseManagerFrame extends javax.swing.JFrame {
         if (confirm == JOptionPane.YES_OPTION) {
             DefaultTableModel model = (DefaultTableModel) TableCourse.getModel();
             model.removeRow(selectedRow);
+        }
+        // 获取课程号
+        String courseId = tableModel.getValueAt(selectedRow, 0).toString();
+
+        try {
+            // 调用Service层删除课程
+            courseService.deleteCourseByCourseId(courseId);
+            JOptionPane.showMessageDialog(this, "课程删除成功！");
+            // 刷新表格
+            loadAllCourses();
+            logger.info("删除课程成功，课程号：{}", courseId);
+        } catch (Exception e) {
+            logger.error("删除课程失败，课程号：{}", courseId, e);
+            JOptionPane.showMessageDialog(this, "删除课程失败：" + e.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
         }
     }
 

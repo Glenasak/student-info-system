@@ -1,6 +1,6 @@
-package com.cjlu.Controller.Impl;
+package com.cjlu.controller.Impl;
 
-import com.cjlu.Controller.UserController;
+import com.cjlu.controller.UserController;
 import com.cjlu.service.impl.UserServiceImpl;
 import org.slf4j.*;
 

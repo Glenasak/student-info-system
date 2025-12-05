@@ -1,5 +1,7 @@
 package com.cjlu.ui;
 
+import com.cjlu.controller.CourseController;
+import com.cjlu.controller.Impl.CourseControllerImpl;
 import com.cjlu.dao.CourseDao;
 import com.cjlu.dao.impl.CourseDaoImpl;
 import com.cjlu.entity.Course;
@@ -9,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.CardLayout;
+import java.util.List;
+import java.util.Map;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -24,8 +28,8 @@ import javax.swing.table.DefaultTableModel;
 public class CourseManagerFrame extends javax.swing.JFrame {
     // 日志记录器
     private static final Logger logger = LoggerFactory.getLogger(CourseManagerFrame.class);
-    //注入Service层
-    private final CourseService courseService;
+    //注入Controller层
+    private final CourseController courseController;
     //表格模型
     private final DefaultTableModel tableModel;
 
@@ -36,70 +40,17 @@ public class CourseManagerFrame extends javax.swing.JFrame {
         initComponents();
         //初始化Service层和模型
         CourseDao courseDao=new CourseDaoImpl();//将Dao层放到这里是什么意思呢？
-        this.courseService =new CourseServiceImpl(courseDao);
+        CourseService courseService = new CourseServiceImpl(courseDao);
+        this.courseController = new CourseControllerImpl(courseService);
         this.tableModel =(DefaultTableModel) TableCourse.getModel();
         //启动时加载所有课程数据
-        initCourseTable();
+        courseController.initCourseTable();
         //启动时加载所有课程数据到表格
-        loadAllCourses();
+        courseController.loadAllCourse();
     }
 
-    /**
-     * 初始化课程表
-     */
-    private void initCourseTable() {
-        try {
-            courseService.createCourseTable();
-            logger.info("课程表初始化成功");
-        } catch (Exception e) {
-            logger.error("课程表初始化失败", e);
-            JOptionPane.showMessageDialog(this, "课程表初始化失败：" + e.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
-        }
-    }
 
-    /**
-     * 加载所有课程数据到表格
-     */
-    private void loadAllCourses() {
-        try {
-            // 清空表格原有数据
-            tableModel.setRowCount(0);
-            // 调用Service层查询所有课程
-            var courses = courseService.getAllCourse();
-            // 填充数据到表格
-            for (var courseMap : courses) {
-                tableModel.addRow(new Object[]{
-                        courseMap.get("course_id"),
-                        courseMap.get("course_name"),
-                        courseMap.get("credit"),
-                        courseMap.get("teacher"),
-                        courseMap.get("semester")
-                });
-            }
-            logger.info("加载课程数据成功，共{}条", courses.size());
-        } catch (Exception e) {
-            logger.error("加载课程数据失败", e);
-            JOptionPane.showMessageDialog(this, "加载课程失败：" + e.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-    /**
-     * 数据校验：非空检查
-     */
-    private boolean isEmpty(String str) {
-        return str == null || str.trim().isEmpty();
-    }
 
-    /**
-     * 数据校验：数字检查
-     */
-    private boolean isNumber(String str) {
-        try {
-            Integer.parseInt(str);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -509,12 +460,12 @@ public class CourseManagerFrame extends javax.swing.JFrame {
         String semester = txtCourseSemester.getText().trim();
 
         // 校验
-        if (courseId.isEmpty() || courseName.isEmpty() || credit.isEmpty()) {
+        if (courseId.isEmpty() || courseName.isEmpty() || credit.isEmpty()|| teacher.isEmpty() || semester.isEmpty()) {
             JOptionPane.showMessageDialog(this, "必填项不能为空！");
             return;
         }
 
-        if (!isNumber(credit)) {
+        if (!courseController.isNumber(credit)) {
             JOptionPane.showMessageDialog(this, "学分必须是数字！");
             return;
         }
@@ -533,11 +484,12 @@ public class CourseManagerFrame extends javax.swing.JFrame {
         course.setSemester(semester);
 
         try {
-            // 调用Service层新增课程
-            courseService.addCourse(course);
-            JOptionPane.showMessageDialog(this, "课程新增成功！");
+            // 调用Controller层新增课程
+            String result = courseController.addCourse(course);
+            refreshTable(courseController.loadAllCourse());
+            JOptionPane.showMessageDialog(this, result);
             // 刷新表格
-            loadAllCourses();
+            courseController.loadAllCourse();
             // 切回列表卡片
             CardLayout cl = (CardLayout) CardPanel1.getLayout();
             cl.show(CardPanel1, "list");
@@ -566,7 +518,7 @@ public class CourseManagerFrame extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "必填项不能为空！");
             return;
         }
-        if (!isNumber(credit)) {
+        if (!courseController.isNumber(credit)) {
             JOptionPane.showMessageDialog(this, "学分必须是数字！");
             return;
         }
@@ -593,11 +545,12 @@ public class CourseManagerFrame extends javax.swing.JFrame {
         course.setSemester(semester);
 
         try {
-            // 调用Service层更新课程
-            courseService.updateCourse(course);
-            JOptionPane.showMessageDialog(this, "课程修改成功！");
+            // 调用Controller层更新课程
+            String result = courseController.updateCourse(course);
+            refreshTable(courseController.loadAllCourse());
+            JOptionPane.showMessageDialog(this, result);
             // 刷新表格
-            loadAllCourses();
+            courseController.loadAllCourse();
             // 切回列表卡片
             CardLayout cl = (CardLayout) CardPanel1.getLayout();
             cl.show(CardPanel1, "list");
@@ -632,12 +585,27 @@ public class CourseManagerFrame extends javax.swing.JFrame {
             return;
         }
 
+        DefaultTableModel model = (DefaultTableModel) TableCourse.getModel();
+        // 逐个检查字段是否为null，避免空指针
+        Object courseIdObj = model.getValueAt(selectedRow, 0);
+        Object courseNameObj = model.getValueAt(selectedRow, 1);
+        Object courseCreditObj = model.getValueAt(selectedRow, 2);
+        Object courseTeacherObj = model.getValueAt(selectedRow, 3);
+        Object courseSemesterObj = model.getValueAt(selectedRow, 4);
+
+
+        if (courseIdObj == null || courseNameObj == null|| courseCreditObj== null|| courseTeacherObj== null|| courseSemesterObj== null) {
+            JOptionPane.showMessageDialog(this, "选中的课程数据不完整，无法修改！");
+            return;
+        }
+
         // 回显选中行数据到修改界面
         txtCourseID1.setText(tableModel.getValueAt(selectedRow, 0).toString());
         txtCourseName1.setText(tableModel.getValueAt(selectedRow, 1).toString());
         txtCourseCredit1.setText(tableModel.getValueAt(selectedRow, 2).toString());
         txtCourseTeacher1.setText(tableModel.getValueAt(selectedRow, 3).toString());
         txtCourseSemester1.setText(tableModel.getValueAt(selectedRow, 4).toString());
+        courseController.loadAllCourse();
 
         CardLayout cl = (CardLayout) CardPanel1.getLayout();
         cl.show(CardPanel1, "update"); // 切回课程列表卡片
@@ -650,9 +618,9 @@ public class CourseManagerFrame extends javax.swing.JFrame {
 
     private void btnListCheckActionPerformed(java.awt.event.ActionEvent evt) {
         String keyword = jTextField1.getText().trim();
-        if (isEmpty(keyword)) {
+        if (courseController.isEmpty(keyword)) {
             // 关键词为空，加载所有课程
-            loadAllCourses();
+            courseController.loadAllCourse();
             return;
         }
 
@@ -660,7 +628,7 @@ public class CourseManagerFrame extends javax.swing.JFrame {
             // 清空表格
             tableModel.setRowCount(0);
             // 调用Service层模糊查询
-            var courses = courseService.getCourseByCourseName(keyword);
+            var courses = courseController.getCourseByCourseName(keyword);
             // 填充数据
             for (var courseMap : courses) {
                 tableModel.addRow(new Object[]{
@@ -674,6 +642,7 @@ public class CourseManagerFrame extends javax.swing.JFrame {
             logger.info("搜索课程成功，关键词：{}，共{}条", keyword, courses.size());
         } catch (Exception e) {
             logger.error("搜索课程失败，关键词：{}", keyword, e);
+            refreshTable(courseController.loadAllCourse());
             JOptionPane.showMessageDialog(this, "搜索课程失败：" + e.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -684,24 +653,40 @@ public class CourseManagerFrame extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "请选择要删除的课程！");
             return;
         }
+        String courseId = tableModel.getValueAt(selectedRow, 0).toString();
         int confirm = JOptionPane.showConfirmDialog(this, "确定删除？");
         if (confirm == JOptionPane.YES_OPTION) {
             DefaultTableModel model = (DefaultTableModel) TableCourse.getModel();
             model.removeRow(selectedRow);
         }
-        // 获取课程号
-        String courseId = tableModel.getValueAt(selectedRow, 0).toString();
 
         try {
-            // 调用Service层删除课程
-            courseService.deleteCourseByCourseId(courseId);
+            // 调用Controller层删除课程
+            courseController.deleteCourseByCourseId(courseId);
             JOptionPane.showMessageDialog(this, "课程删除成功！");
             // 刷新表格
-            loadAllCourses();
+            courseController.loadAllCourse();
             logger.info("删除课程成功，课程号：{}", courseId);
         } catch (Exception e) {
             logger.error("删除课程失败，课程号：{}", courseId, e);
+            refreshTable(courseController.loadAllCourse());
             JOptionPane.showMessageDialog(this, "删除课程失败：" + e.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void refreshTable(List<Map<String, Object>> list) {
+        DefaultTableModel model = (DefaultTableModel) TableCourse.getModel();
+        model.setRowCount(0);
+        if (list != null) {
+            for (Map<String, Object> item : list) {
+                model.addRow(new Object[]{
+                        item.get("course_id"),
+                        item.get("course_name"),
+                        item.get("credit"),
+                        item.get("teacher"),
+                        item.get("semester")
+                });
+            }
         }
     }
 

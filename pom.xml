@@ -44,6 +44,12 @@
             <!-- 保持为默认（compile）范围，确保在 IDE 与直接运行时驱动可用 -->
         </dependency>
 
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.4.8</version>
+        </dependency>
+
         <!-- DBCP 2.x + Commons-Pool 2.x（版本匹配，替代老旧的 1.x） -->
         <dependency>
             <groupId>org.apache.commons</groupId>

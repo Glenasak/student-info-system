@@ -7,6 +7,7 @@ import com.cjlu.util.JDBCUtils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,9 +37,11 @@ public class CourseDaoImpl implements CourseDao {
             pstmt.setString(5, course.getSemester());
             return pstmt.executeUpdate();
         } catch (Exception e) {
-            e.printStackTrace();
-            logger.error("Error add course name:", e);
-            JDBCUtils.closeResources(conn, pstmt);
+            if (e.getMessage().contains("NOT NULL")) {
+                logger.error("Error add course name：it is null", e);
+            } else {
+                logger.error("Error add course name:", e);
+            }
             return 0;
         }
     }
@@ -406,13 +409,13 @@ public class CourseDaoImpl implements CourseDao {
     public void createCourseTable() {
         try {
             conn = JDBCUtils.getConnection();
-            String sql = "CREATE TABLE IF NOT EXISTS course(" +
-                    "course_id VARCHAR(10) PRIMARY KEY," +
+            String sql =  "CREATE TABLE course(" +
+                    "course_id VARCHAR(10) PRIMARY KEY NOT NULL," +
                     "course_name VARCHAR(50) NOT NULL," +
                     "credit INT NOT NULL," +
                     "teacher VARCHAR(20) NOT NULL," +
                     "semester VARCHAR(10) NOT NULL" +
-                    ")ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+                    ")";
             pstmt = conn.prepareStatement(sql);
             pstmt.executeUpdate();
             JDBCUtils.closeResources(conn, pstmt);

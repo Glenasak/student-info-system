@@ -1,11 +1,11 @@
 ----------------------------------------------------------------
-Fri Dec 05 14:44:05 GMT+08:00 2025:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.15.2.0 - (1873585): instance a816c00e-019a-ed40-e760-00001ee069a8 
-on database directory C:\我的文件\02工作\PDC\student-info-system\student-info-system\MyDB with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@33909752 
-Loaded from file:/C:/Users/q1506/.m2/repository/org/apache/derby/derby/10.15.2.0/derby-10.15.2.0.jar
+Fri Dec 05 20:12:14 CST 2025:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.15.2.0 - (1873585): instance a816c00e-019a-ee6d-5618-00000f33b1f0 
+on database directory D:\project\MyDB with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@36baf30c 
+Loaded from file:/C:/Users/25896/.m2/repository/org/apache/derby/derby/10.15.2.0/derby-10.15.2.0.jar
 java.vendor=Oracle Corporation
-java.runtime.version=17.0.12+8-LTS-286
-user.dir=C:\我的文件\02工作\PDC\student-info-system\student-info-system
+java.runtime.version=21.0.7+8-LTS-245
+user.dir=D:\project
 os.name=Windows 11
 os.arch=amd64
 os.version=10.0

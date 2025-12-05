@@ -1,4 +1,4 @@
-package com.cjlu.Controller;
+package com.cjlu.controller;
 
 public interface UserController {
     //用户登录

@@ -9,7 +9,7 @@ import java.awt.CardLayout;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import com.cjlu.controller.ScoreController;
+import com.cjlu.controller.Impl.ScoreControllerImpl;
 import com.cjlu.entity.Scores;
 
 /**
@@ -23,7 +23,7 @@ public class ScoreManagerJFrame extends javax.swing.JFrame {
      */
     public ScoreManagerJFrame() {
         initComponents();
-                controller = new ScoreController();
+                controller = new ScoreControllerImpl();
                 refreshTable(controller.listAll());
     }
 
@@ -535,27 +535,16 @@ public class ScoreManagerJFrame extends javax.swing.JFrame {
                         String studentIdStr = txtCourseName1.getText().trim(); // 复用 UI 字段命名
                         String courseCode = txtCourseCredit1.getText().trim();
                         String scoreStr = txtCourseTeacher1.getText().trim();
-                        String examDate = txtCourseSemester1.getText().trim();
 
                         Integer studentId = Integer.valueOf(studentIdStr);
                         Integer courseId = Integer.valueOf(courseCode);
-                        Integer score = Integer.valueOf(scoreStr);
-
-                        java.util.Date examDateVal = null;
-                        if (!examDate.isEmpty()) {
-                                try {
-                                        examDateVal = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(examDate);
-                                } catch (java.text.ParseException pe) {
-                                        throw new IllegalArgumentException("考试日期格式应为 yyyy-MM-dd");
-                                }
-                        }
+                        Double score = Double.valueOf(scoreStr);
 
                         Scores s = new Scores();
-                        s.setScoreId(scoreId);
-                        s.setStudnetId(studentId); // 注意实体方法名为 setStudnetId
+                        s.setId(scoreId);
+                        s.setStudentId(studentId);
                         s.setCourseId(courseId);
                         s.setScore(score);
-                        if (examDateVal != null) s.setExamDate(examDateVal);
 
                         controller.update(s);
                         refreshTable(controller.listAll());
@@ -573,11 +562,11 @@ public class ScoreManagerJFrame extends javax.swing.JFrame {
                 if (list == null) return;
                 for (Scores s : list) {
                         model.addRow(new Object[]{
-                                        s.getScoreId(),
+                                        s.getId(),
                                         s.getStudentId(),
                                         s.getCourseId(),
                                         s.getScore(),
-                                        s.getExamDate() == null ? "" : new java.text.SimpleDateFormat("yyyy-MM-dd").format(s.getExamDate())
+                                        ""
                         });
                 }
         }
@@ -618,7 +607,7 @@ public class ScoreManagerJFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify
-        private ScoreController controller;
+        private ScoreControllerImpl controller;
     private javax.swing.JPanel AddCard;
     private javax.swing.JPanel ListCard;
     private javax.swing.JPanel ScorePanel1;

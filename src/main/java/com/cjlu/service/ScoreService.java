@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.cjlu.entity.Scores;
 
-public interface ScoresService {
+public interface ScoreService {
 
     //创建成绩表
     public void createScoresTable();

@@ -3,17 +3,17 @@ package com.cjlu.service.impl;
 import java.util.List;
 
 import com.cjlu.entity.Scores;
-import com.cjlu.service.ScoresService;
 
 import com.cjlu.dao.impl.ScoresDaoImpl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.cjlu.service.ScoreService;
 
-public class ScoresServiceImpl implements ScoresService {
+public class ScoreServiceImpl implements ScoreService {
 
     //日志记录器
-    private static final Logger logger = LoggerFactory.getLogger(ScoresServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(ScoreServiceImpl.class);
 
     //Dao层对象
     private ScoresDaoImpl scoresDao = new ScoresDaoImpl();

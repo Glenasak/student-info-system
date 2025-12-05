@@ -71,7 +71,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void showLoginUserInfo() {
         if (currentLoginUser != null && !currentLoginUser.isEmpty()) {
-            jMenuItem5.setText("Welcome to log in" + currentLoginUser);
+            jMenuItem5.setText("Welcome to log in " + currentLoginUser);
             jMenuItem5.setEnabled(false);
         }
     }
@@ -533,6 +533,13 @@ public class MainFrame extends javax.swing.JFrame {
         // 菜单栏
         jMenu1.setText("system_manage");
         jMenuItem1.setText("password_change");
+jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+    public void actionPerformed(java.awt.event.ActionEvent evt) {
+        passwordChangeActionPerformed(evt); // 绑定自定义方法
+    }
+});
+        
+        
         jMenu1.add(jMenuItem1);
         jMenuItem2.setText("get_out_of_system");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
@@ -548,9 +555,9 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu2.add(jMenuItem3);
         jMenuBar1.add(jMenu2);
 
-        jMenu3.setText("help");
+//        jMenu3.setText("help");
         jMenuItem4.setText("aboutsystem");
-        jMenu3.add(jMenuItem4);
+//        jMenu3.add(jMenuItem4);
         jMenuBar1.add(jMenu3);
 
         jMenu8.setText("username");
@@ -565,6 +572,74 @@ public class MainFrame extends javax.swing.JFrame {
 
 
     // ---------------- 学生管理相关事件 ----------------
+    // 密码修改功能
+private void passwordChangeActionPerformed(java.awt.event.ActionEvent evt) {
+    // 1. 检查是否有登录用户
+    if (currentLoginUser == null || currentLoginUser.trim().isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Please log in first!");
+        return;
+    }
+
+    // 2. 弹出对话框获取原密码、新密码
+    String oldPwd = JOptionPane.showInputDialog(this, "Please enter old password:", "Password Change", JOptionPane.PLAIN_MESSAGE);
+    if (oldPwd == null || oldPwd.trim().isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Old password cannot be empty!");
+        return;
+    }
+
+    String newPwd = JOptionPane.showInputDialog(this, "Please enter new password:", "Password Change", JOptionPane.PLAIN_MESSAGE);
+    if (newPwd == null || newPwd.trim().isEmpty()) {
+        JOptionPane.showMessageDialog(this, "New password cannot be empty!");
+        return;
+    }
+
+    String confirmPwd = JOptionPane.showInputDialog(this, "Please confirm new password:", "Password Change", JOptionPane.PLAIN_MESSAGE);
+    if (!newPwd.equals(confirmPwd)) {
+        JOptionPane.showMessageDialog(this, "New passwords do not match!");
+        return;
+    }
+
+    // 3. 从数据库校验原密码并更新新密码（假设用户表为 users，字段为 username 和 password）
+    Connection conn = null;
+    PreparedStatement pstmtCheck = null;
+    PreparedStatement pstmtUpdate = null;
+    ResultSet rs = null;
+    try {
+        conn = JDBCUtils.getConnection();
+        // 3.1 校验原密码是否正确
+        String checkSql = "SELECT password FROM users WHERE username = ?";
+        pstmtCheck = conn.prepareStatement(checkSql);
+        pstmtCheck.setString(1, currentLoginUser);
+        rs = pstmtCheck.executeQuery();
+        if (!rs.next()) {
+            JOptionPane.showMessageDialog(this, "User does not exist!");
+            return;
+        }
+        String dbPwd = rs.getString("password");
+        if (!dbPwd.equals(oldPwd)) { // 实际项目中建议加密存储，这里简化为明文对比
+            JOptionPane.showMessageDialog(this, "Old password is incorrect!");
+            return;
+        }
+
+        // 3.2 更新新密码
+        String updateSql = "UPDATE users SET password = ? WHERE username = ?";
+        pstmtUpdate = conn.prepareStatement(updateSql);
+        pstmtUpdate.setString(1, newPwd);
+        pstmtUpdate.setString(2, currentLoginUser);
+        int rows = pstmtUpdate.executeUpdate();
+        if (rows > 0) {
+            JOptionPane.showMessageDialog(this, "Password changed successfully!");
+        } else {
+            JOptionPane.showMessageDialog(this, "Failed to change password!");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+    } finally {
+        JDBCUtils.closeResources(conn, pstmtCheck, rs);
+        JDBCUtils.closeResources(null, pstmtUpdate, null); // 单独关闭update的Statement
+    }
+}
     // 点击“添加学生”按钮：切换到添加卡片
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
         studentCardLayout.show(jPanel4, "add");

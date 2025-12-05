@@ -282,26 +282,26 @@ public class MainFrame extends javax.swing.JFrame {
 
         // 2. 添加学生卡片（AddCard）
         jLabel11.setFont(new java.awt.Font("Microsoft Tai Le", 1, 18));
-        jLabel11.setText("添加学生");
+        jLabel11.setText("Addstudent");
 
-        jLabel2.setText("学号");
-        jLabel3.setText("姓名");
-        jLabel4.setText("性别");
-        jLabel5.setText("年龄");
-        jLabel6.setText("班级");
-        jLabel7.setText("电话");
-        jLabel8.setText("专业");
-        jLabel9.setText("入学日期");
-        jLabel10.setText("邮箱");
+        jLabel2.setText("student_id");
+        jLabel3.setText("name");
+        jLabel4.setText("gender");
+        jLabel5.setText("age");
+        jLabel6.setText("class");
+        jLabel7.setText("phone");
+        jLabel8.setText("major");
+        jLabel9.setText("admission_date");
+        jLabel10.setText("email");
 
-        btnAddBack.setText("返回");
+        btnAddBack.setText("return");
         btnAddBack.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAddBackActionPerformed(evt);
             }
         });
 
-        btnAddSave.setText("保存");
+        btnAddSave.setText("save");
         btnAddSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAddSaveActionPerformed(evt);
@@ -405,26 +405,26 @@ public class MainFrame extends javax.swing.JFrame {
 
         // 3. 修改学生卡片（UpdateCard）
         jLabel21.setFont(new java.awt.Font("Microsoft Tai Le", 1, 18));
-        jLabel21.setText("修改学生");
+        jLabel21.setText("updateStudent");
 
-        jLabel12.setText("学号");
-        jLabel13.setText("姓名");
-        jLabel14.setText("性别");
-        jLabel15.setText("年龄");
-        jLabel16.setText("班级");
-        jLabel17.setText("电话");
-        jLabel18.setText("专业");
-        jLabel19.setText("入学日期");
-        jLabel20.setText("邮箱");
+        jLabel12.setText("student_id");
+        jLabel13.setText("name");
+        jLabel14.setText("gender");
+        jLabel15.setText("age");
+        jLabel16.setText("class_name");
+        jLabel17.setText("phone");
+        jLabel18.setText("major");
+        jLabel19.setText("admission_date");
+        jLabel20.setText("email");
 
-        btnAddBack1.setText("返回");
+        btnAddBack1.setText("return");
         btnAddBack1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAddBack1ActionPerformed(evt);
             }
         });
 
-        btnAddSave1.setText("更新");
+        btnAddSave1.setText("update");
         btnAddSave1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAddSave1ActionPerformed(evt);
@@ -812,12 +812,12 @@ public class MainFrame extends javax.swing.JFrame {
                 }
             }
         } catch (Exception ex) {
-            java.util.logging.Logger.getLogger(MainFrame_old.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MainFrame_old().setVisible(true);
+                new MainFrame().setVisible(true);
             }
         });
     }

@@ -16,9 +16,7 @@ public class CourseServiceImpl implements CourseService {
     //数据访问对象
     private CourseDao courseDao;
 
-    public CourseServiceImpl(CourseDao courseDao) {
-        this.courseDao = courseDao;
-    }
+    
 
     public void addCourse(Course course){
         try {

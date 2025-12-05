@@ -1,38 +1,32 @@
-package com.cjlu.controller;
+package com.cjlu.Controller;
+
+import java.util.List;
 
 import com.cjlu.entity.Course;
 
-import java.util.List;
-import java.util.Map;
-
 public interface CourseController {
-    //初始化课程表
-    void initCourseTable();
 
-    //启动时加载所有课程数据到表格
-    List<Map<String,Object>> loadAllCourse();
+    //添加课程方法
+    public boolean addCourse(Course course);
 
-    //添加课程
-    String addCourse(Course course);
+    //根据ID删除课程方法
+    public boolean deleteCourse(Integer id);
 
-    //更新课程
-    String updateCourse(Course course);
+    //更新课程方法
+    public boolean updateCourse(Course course);
 
-    //删除课程
-    String deleteCourse(Course course);
+    //根据ID查询课程方法
+    public Course getCourseById(Integer id);
+    
+    //查询所有课程方法
+    public List<Course> getAllCourses();
 
-    //查询课程
-    List<Map<String,Object>>searchCourse(String keyword);
+    //根据课程名称查询课程方法
+    public Course getCourseByName(String name);
 
-    //数据校验：非空检查
-    boolean isEmpty(String str);
+    //根据学分范围查询课程方法
+    public List<Course> getCoursesByCreditRange(Integer minCredit, Integer maxCredit);
 
-    //数据校验：数字检查
-    boolean isNumber(String str);
-
-
-    List<Map<String,Object>> getCourseByCourseName(String keyword);
-
-    List<Map<String,Object>> deleteCourseByCourseId(String courseId);
-
+    //根据教师查询课程方法
+    public List<Course> getCoursesByInstructor(String instructor);
 }

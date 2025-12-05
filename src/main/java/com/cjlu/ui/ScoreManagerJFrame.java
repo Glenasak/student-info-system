@@ -6,8 +6,11 @@ package com.cjlu.ui;
  */
 
 import java.awt.CardLayout;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import com.cjlu.controller.ScoreController;
+import com.cjlu.entity.Scores;
 
 /**
  *
@@ -20,6 +23,8 @@ public class ScoreManagerJFrame extends javax.swing.JFrame {
      */
     public ScoreManagerJFrame() {
         initComponents();
+                controller = new ScoreController();
+                refreshTable(controller.listAll());
     }
 
     /**
@@ -418,9 +423,26 @@ public class ScoreManagerJFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>
 
-    private void btnListCheckActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-    }
+        private void btnListCheckActionPerformed(java.awt.event.ActionEvent evt) {
+                String keyword = jTextField1.getText().trim();
+                try {
+                        List<Scores> list;
+                        if (keyword.isEmpty()) {
+                                list = controller.listAll();
+                        } else {
+                                // 简单策略：优先按学生ID整数解析，否则按课程名称查询
+                                try {
+                                        Integer sid = Integer.valueOf(keyword);
+                                        list = controller.listByStudentId(sid);
+                                } catch (NumberFormatException e) {
+                                        list = controller.listByCourseName(keyword);
+                                }
+                        }
+                        refreshTable(list);
+                } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(this, "查询失败: " + ex.getMessage());
+                }
+        }
 
     private void btnListAddActionPerformed(java.awt.event.ActionEvent evt) {
         CardLayout cl = (CardLayout) ScorePanel1.getLayout();
@@ -438,18 +460,25 @@ public class ScoreManagerJFrame extends javax.swing.JFrame {
         cl.show(ScorePanel1, "update"); // 切回课程列表卡片
     }
 
-    private void btnListDeleteActionPerformed(java.awt.event.ActionEvent evt) {
-        int selectedRow = TableScore.getSelectedRow();
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "请选择要删除的课程！");
-            return;
+        private void btnListDeleteActionPerformed(java.awt.event.ActionEvent evt) {
+                int selectedRow = TableScore.getSelectedRow();
+                if (selectedRow == -1) {
+                        JOptionPane.showMessageDialog(this, "请选择要删除的成绩！");
+                        return;
+                }
+                int confirm = JOptionPane.showConfirmDialog(this, "确定删除？");
+                if (confirm == JOptionPane.YES_OPTION) {
+                        try {
+                                DefaultTableModel model = (DefaultTableModel) TableScore.getModel();
+                                Object idObj = model.getValueAt(selectedRow, 0);
+                                Integer scoreId = Integer.valueOf(String.valueOf(idObj));
+                                controller.delete(scoreId);
+                                refreshTable(controller.listAll());
+                        } catch (Exception ex) {
+                                JOptionPane.showMessageDialog(this, "删除失败: " + ex.getMessage());
+                        }
+                }
         }
-        int confirm = JOptionPane.showConfirmDialog(this, "确定删除？");
-        if (confirm == JOptionPane.YES_OPTION) {
-            DefaultTableModel model = (DefaultTableModel) TableScore.getModel();
-            model.removeRow(selectedRow);
-        }
-    }
 
     private void txtScoreIDActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
@@ -460,28 +489,29 @@ public class ScoreManagerJFrame extends javax.swing.JFrame {
         cl.show(ScorePanel1, "list"); // 切回课程列表卡片
     }
 
-    private void btnAddSaveActionPerformed(java.awt.event.ActionEvent evt) {
-        // 获取输入数据
-        String courseId = txtScoreID.getText().trim();
-        String courseName = txtStudentID.getText().trim();
-        String credit = txtCourseID.getText().trim();
-        String teacher = txtScore.getText().trim();
-        String semester = txtExamDate.getText().trim();
+        private void btnAddSaveActionPerformed(java.awt.event.ActionEvent evt) {
+                // 获取输入数据（成绩模型：ScoreID 由后端生成也可手填，这里按服务层方法）
+                String studentIdStr = txtStudentID.getText().trim();
+                String courseCode = txtCourseID.getText().trim();
+                String scoreStr = txtScore.getText().trim();
+                String examDate = txtExamDate.getText().trim(); // 录入时暂不使用，更新时会写入实体
 
-        // 校验
-        if (courseId.isEmpty() || courseName.isEmpty() || credit.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "必填项不能为空！");
-            return;
+                if (studentIdStr.isEmpty() || courseCode.isEmpty() || scoreStr.isEmpty()) {
+                        JOptionPane.showMessageDialog(this, "必填项不能为空！");
+                        return;
+                }
+                try {
+                            Integer studentId = Integer.valueOf(studentIdStr);
+                            Double score = Double.valueOf(scoreStr);
+                            controller.add(studentId, courseCode, score);
+                        refreshTable(controller.listAll());
+
+                        CardLayout cl = (CardLayout) ScorePanel1.getLayout();
+                        cl.show(ScorePanel1, "list");
+                } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(this, "保存失败: " + ex.getMessage());
+                }
         }
-
-        // 更新课程列表表格
-        DefaultTableModel model = (DefaultTableModel) TableScore.getModel();
-        model.addRow(new Object[]{courseId, courseName, Integer.parseInt(credit), teacher, semester});
-
-        // 切回列表卡片
-        CardLayout cl = (CardLayout) ScorePanel1.getLayout();
-        cl.show(ScorePanel1, "list");
-    }
 
     private void txtCourseID1ActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
@@ -492,32 +522,65 @@ public class ScoreManagerJFrame extends javax.swing.JFrame {
         cl.show(ScorePanel1, "list"); // 切回课程列表卡片
     }
 
-    private void btnAddSave1ActionPerformed(java.awt.event.ActionEvent evt) {
-        // 获取修改后的数据
-        String courseId = txtCourseID1.getText().trim();
-        String courseName = txtCourseName1.getText().trim();
-        String credit = txtCourseCredit1.getText().trim();
-        String teacher = txtCourseTeacher1.getText().trim();
-        String semester = txtCourseSemester1.getText().trim();
+        private void btnAddSave1ActionPerformed(java.awt.event.ActionEvent evt) {
+                int selectedRow = TableScore.getSelectedRow();
+                if (selectedRow == -1) {
+                        JOptionPane.showMessageDialog(this, "请先在列表选择一行进行更新！");
+                        return;
+                }
+                try {
+                        DefaultTableModel model = (DefaultTableModel) TableScore.getModel();
+                        Integer scoreId = Integer.valueOf(String.valueOf(model.getValueAt(selectedRow, 0)));
 
-        // 校验
-        if (courseName.isEmpty() || credit.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "必填项不能为空！");
-            return;
+                        String studentIdStr = txtCourseName1.getText().trim(); // 复用 UI 字段命名
+                        String courseCode = txtCourseCredit1.getText().trim();
+                        String scoreStr = txtCourseTeacher1.getText().trim();
+                        String examDate = txtCourseSemester1.getText().trim();
+
+                        Integer studentId = Integer.valueOf(studentIdStr);
+                        Integer courseId = Integer.valueOf(courseCode);
+                        Integer score = Integer.valueOf(scoreStr);
+
+                        java.util.Date examDateVal = null;
+                        if (!examDate.isEmpty()) {
+                                try {
+                                        examDateVal = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(examDate);
+                                } catch (java.text.ParseException pe) {
+                                        throw new IllegalArgumentException("考试日期格式应为 yyyy-MM-dd");
+                                }
+                        }
+
+                        Scores s = new Scores();
+                        s.setScoreId(scoreId);
+                        s.setStudnetId(studentId); // 注意实体方法名为 setStudnetId
+                        s.setCourseId(courseId);
+                        s.setScore(score);
+                        if (examDateVal != null) s.setExamDate(examDateVal);
+
+                        controller.update(s);
+                        refreshTable(controller.listAll());
+
+                        CardLayout cl = (CardLayout) ScorePanel1.getLayout();
+                        cl.show(ScorePanel1, "list");
+                } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(this, "更新失败: " + ex.getMessage());
+                }
         }
 
-        // 更新表格选中行
-        int selectedRow = TableScore.getSelectedRow();
-        DefaultTableModel model = (DefaultTableModel) TableScore.getModel();
-        model.setValueAt(courseName, selectedRow, 1);
-        model.setValueAt(Integer.parseInt(credit), selectedRow, 2);
-        model.setValueAt(teacher, selectedRow, 3);
-        model.setValueAt(semester, selectedRow, 4);
-
-        // 切回列表卡片fffff
-        CardLayout cl = (CardLayout) ScorePanel1.getLayout();
-        cl.show(ScorePanel1, "list");
-    }
+        private void refreshTable(java.util.List<Scores> list) {
+                DefaultTableModel model = (DefaultTableModel) TableScore.getModel();
+                model.setRowCount(0);
+                if (list == null) return;
+                for (Scores s : list) {
+                        model.addRow(new Object[]{
+                                        s.getScoreId(),
+                                        s.getStudentId(),
+                                        s.getCourseId(),
+                                        s.getScore(),
+                                        s.getExamDate() == null ? "" : new java.text.SimpleDateFormat("yyyy-MM-dd").format(s.getExamDate())
+                        });
+                }
+        }
 
     /**
      * @param args the command line arguments
@@ -555,6 +618,7 @@ public class ScoreManagerJFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify
+        private ScoreController controller;
     private javax.swing.JPanel AddCard;
     private javax.swing.JPanel ListCard;
     private javax.swing.JPanel ScorePanel1;

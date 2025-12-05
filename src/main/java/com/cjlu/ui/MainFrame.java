@@ -63,7 +63,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "加载学生数据失败：" + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Failed to load student data" + e.getMessage());
         } finally {
             JDBCUtils.closeResources(conn, pstmt, rs);
         }
@@ -71,7 +71,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void showLoginUserInfo() {
         if (currentLoginUser != null && !currentLoginUser.isEmpty()) {
-            jMenuItem5.setText("欢迎登录：" + currentLoginUser);
+            jMenuItem5.setText("Welcome to log in" + currentLoginUser);
             jMenuItem5.setEnabled(false);
         }
     }
@@ -152,38 +152,38 @@ public class MainFrame extends javax.swing.JFrame {
         jMenuItem5 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("学生信息管理系统");
+        setTitle("student information management system");
         setPreferredSize(new java.awt.Dimension(900, 700));
 
         // 课程管理标签页
-        jButton7.setText("进入CourseManagerFrame");
+        jButton7.setText("get into CourseManagerFrame");
         jButton7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton7ActionPerformed(evt);
             }
         });
         jPanel1.add(jButton7);
-        jTabbedPane1.addTab("课程管理", jPanel1);
+        jTabbedPane1.addTab("course management", jPanel1);
 
         // 成绩管理标签页
-        jButton8.setText("进入ScoreManagerFrame");
+        jButton8.setText("get into ScoreManagerFrame");
         jButton8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton8ActionPerformed(evt);
             }
         });
         jPanel2.add(jButton8);
-        jTabbedPane1.addTab("成绩管理", jPanel2);
+        jTabbedPane1.addTab("score management", jPanel2);
 
         // 数据统计标签页
-        jButton9.setText("进入StatisticManageFrame");
+        jButton9.setText("get into StatisticManageFrame");
         jButton9.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton9ActionPerformed(evt);
             }
         });
         jPanel3.add(jButton9);
-        jTabbedPane1.addTab("数据统计", jPanel3);
+        jTabbedPane1.addTab("data statistics", jPanel3);
 
         // ---------------- 学生管理标签页（CardLayout设置） ----------------
         studentCardLayout = new CardLayout();
@@ -199,35 +199,35 @@ public class MainFrame extends javax.swing.JFrame {
         jScrollPane2.setViewportView(jTable1);
 
         // 列表卡片的按钮布局
-        jButton1.setText("添加学生");
+        jButton1.setText("Add students");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
-        jButton2.setText("修改学生");
+        jButton2.setText("Modify students");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
 
-        jButton4.setText("查询学生");
+        jButton4.setText("Search for students");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
             }
         });
 
-        jButton3.setText("删除学生");
+        jButton3.setText("Delete student");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
             }
         });
 
-        jButton6.setText("重置查询");
+        jButton6.setText("Reset the query");
         jButton6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton6ActionPerformed(evt);
@@ -527,14 +527,14 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel4.add(UpdateCard, "update");
         // ---------------- 学生管理标签页结束 ----------------
 
-        jTabbedPane1.addTab("学生管理", jPanel4);
+        jTabbedPane1.addTab("student_manage", jPanel4);
         getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
         // 菜单栏
-        jMenu1.setText("系统管理");
-        jMenuItem1.setText("密码修改");
+        jMenu1.setText("system_manage");
+        jMenuItem1.setText("password_change");
         jMenu1.add(jMenuItem1);
-        jMenuItem2.setText("退出系统");
+        jMenuItem2.setText("get_out_of_system");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItem2ActionPerformed(evt);
@@ -543,17 +543,17 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu1.add(jMenuItem2);
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText("学生管理");
-        jMenuItem3.setText("新增学生");
+        jMenu2.setText("Student_manage");
+        jMenuItem3.setText("add_student");
         jMenu2.add(jMenuItem3);
         jMenuBar1.add(jMenu2);
 
-        jMenu3.setText("帮助");
-        jMenuItem4.setText("关于系统");
+        jMenu3.setText("help");
+        jMenuItem4.setText("aboutsystem");
         jMenu3.add(jMenuItem4);
         jMenuBar1.add(jMenu3);
 
-        jMenu8.setText("当前用户");
+        jMenu8.setText("username");
         jMenuItem5.setText("name");
         jMenu8.add(jMenuItem5);
         jMenuBar1.add(jMenu8);
@@ -584,7 +584,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
         int selectedRow = jTable1.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "请先选中要修改的学生行！");
+            JOptionPane.showMessageDialog(this, "Please select the row of the student you want to modify first!");
             return;
         }
 
@@ -606,12 +606,12 @@ public class MainFrame extends javax.swing.JFrame {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {
         int selectedRow = jTable1.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "请先选中要删除的学生行！");
+            JOptionPane.showMessageDialog(this, "Please select the row of the student you want to delete first!");
             return;
         }
 
         String studentName = jTable1.getValueAt(selectedRow, 1).toString();
-        int confirm = JOptionPane.showConfirmDialog(this, "确定要删除 " + studentName + " 的信息吗？");
+        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete" + studentName + " ？");
         if (confirm == JOptionPane.YES_OPTION) {
             // 数据库删除操作（补充）
             String studentId = jTable1.getValueAt(selectedRow, 0).toString();
@@ -624,10 +624,10 @@ public class MainFrame extends javax.swing.JFrame {
                 pstmt.setString(1, studentId);
                 pstmt.executeUpdate();
                 ((DefaultTableModel) jTable1.getModel()).removeRow(selectedRow);
-                JOptionPane.showMessageDialog(this, "删除成功！");
+                JOptionPane.showMessageDialog(this, "successfully delete");
             } catch (Exception e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "删除失败：" + e.getMessage());
+                JOptionPane.showMessageDialog(this, "fail to delete" + e.getMessage());
             } finally {
                 JDBCUtils.closeResources(conn, pstmt, null);
             }
@@ -636,9 +636,9 @@ public class MainFrame extends javax.swing.JFrame {
 
     // 点击“查询学生”按钮（原逻辑保留）
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {
-        String keyword = JOptionPane.showInputDialog(this, "请输入学号或姓名查询：");
+        String keyword = JOptionPane.showInputDialog(this, "Please enter your student number or name to make the query:");
         if (keyword == null || keyword.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "查询关键词不能为空！");
+            JOptionPane.showMessageDialog(this, "The query keyword cannot be empty!");
             return;
         }
         keyword = keyword.trim().toLowerCase();
@@ -652,13 +652,13 @@ public class MainFrame extends javax.swing.JFrame {
                 model.removeRow(i);
             }
         }
-        JOptionPane.showMessageDialog(this, "查询完成！共找到 " + model.getRowCount() + " 条匹配数据");
+        JOptionPane.showMessageDialog(this, "Query completed! A total of" + model.getRowCount() + " data");
     }
 
     // 点击“重置查询”按钮（原逻辑保留）
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {
         loadStudentData();
-        JOptionPane.showMessageDialog(this, "已重置查询，显示所有学生数据！");
+        JOptionPane.showMessageDialog(this, "The query has been reset and now all student data is displayed!");
     }
 
     // 点击“添加学生-保存”按钮：插入数据库并更新表格
@@ -676,7 +676,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         // 非空校验
         if (studentId.isEmpty() || name.isEmpty() || gender.isEmpty() || age.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "学号、姓名、性别、年龄不能为空！");
+            JOptionPane.showMessageDialog(this, "Student number, name, gender and age cannot be left blank!");
             return;
         }
 
@@ -701,13 +701,13 @@ public class MainFrame extends javax.swing.JFrame {
             // 更新表格
             DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
             model.addRow(new Object[]{studentId, name, gender, Integer.parseInt(age), className, phone, major, admissionDate, email});
-            JOptionPane.showMessageDialog(this, "添加成功！");
+            JOptionPane.showMessageDialog(this, "successfully added");
 
             // 切回列表卡片
             studentCardLayout.show(jPanel4, "list");
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "添加失败：" + e.getMessage());
+            JOptionPane.showMessageDialog(this, "successfully faild：" + e.getMessage());
         } finally {
             JDBCUtils.closeResources(conn, pstmt, null);
         }
@@ -733,7 +733,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         // 非空校验
         if (name.isEmpty() || gender.isEmpty() || age.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "姓名、性别、年龄不能为空！");
+            JOptionPane.showMessageDialog(this, "Name, gender and age cannot be left blank!");
             return;
         }
 
@@ -766,13 +766,13 @@ public class MainFrame extends javax.swing.JFrame {
             model.setValueAt(major, selectedRow, 6);
             model.setValueAt(admissionDate, selectedRow, 7);
             model.setValueAt(email, selectedRow, 8);
-            JOptionPane.showMessageDialog(this, "修改成功！");
+            JOptionPane.showMessageDialog(this, "chaged success");
 
             // 切回列表卡片
             studentCardLayout.show(jPanel4, "list");
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "修改失败：" + e.getMessage());
+            JOptionPane.showMessageDialog(this, "chaged failed" + e.getMessage());
         } finally {
             JDBCUtils.closeResources(conn, pstmt, null);
         }

@@ -4,7 +4,13 @@
  */
 package com.cjlu.ui;
 
+import com.cjlu.util.JDBCUtils;
+
 import javax.swing.JOptionPane;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  *
@@ -96,45 +102,47 @@ public class login extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_Password_Password_FieldActionPerformed
 
-    private void Login_ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Login_ButtonActionPerformed
-        String username = Username_Formatted_Field.getText().trim(); // trim()去除前后空格
-        String password = new String(Password_Password_Field.getPassword()); // 密码框用getPassword()获取字符数组，转成字符串
+    private void Login_ButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        String username = Username_Formatted_Field.getText().trim();
+        String password = new String(Password_Password_Field.getPassword());
 
-    // 2. 简单的非空校验（防止空输入）
-    if (username.isEmpty() || password.isEmpty()) {
-        javax.swing.JOptionPane.showMessageDialog(this, "用户名或密码不能为空！");
-        return; // 校验不通过，直接返回
-    }//GEN-LAST:event_Login_ButtonActionPerformed
-    if ("admin".equals(username) && "123456".equals(password)) {
-        JOptionPane.showMessageDialog(this, "登录成功！");
-        // 登录成功后可以打开主界面，比如：
-        new MainFrame(username).setVisible(true); // 把当前登录的username传进去
-         this.dispose(); // 关闭当前登录窗口
-    } else {
-        JOptionPane.showMessageDialog(this, "用户名或密码错误！");
-        Password_Password_Field.setText(""); // 清空密码框
-    }
-//// （需要先准备：1. Derby数据库的users表；2. JDBC连接工具类）
-//// 从数据库查询用户信息
-//    String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
-//    try (Connection conn = DBUtil.getConnection(); // DBUtil是你自己写的数据库连接工具类
-//        PreparedStatement pstmt = conn.prepareStatement(sql)) {
-//        pstmt.setString(1, username);
-//        pstmt.setString(2, password);
-//        ResultSet rs = pstmt.executeQuery();
-//    
-//        if (rs.next()) {
-//            // 数据库中存在该用户，登录成功
-//            JOptionPane.showMessageDialog(this, "登录成功！");
-//            // 打开主界面...
-//        } else {
-//            JOptionPane.showMessageDialog(this, "用户名或密码错误！");
-//            txtPassword.setText("");
-//        }
-//    } catch (SQLException e) {
-//        e.printStackTrace();
-//        JOptionPane.showMessageDialog(this, "数据库连接失败！");
-//    }
+        if (username.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "用户名或密码不能为空！");
+            return;
+        }
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            // 获取数据库连接（可能抛出异常）
+            conn = JDBCUtils.getConnection();
+            String sql = "SELECT password FROM users WHERE username = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, username);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                String dbPassword = rs.getString("password");
+                if (dbPassword.equals(password)) {
+                    JOptionPane.showMessageDialog(this, "登录成功！");
+                    new MainFrame(username).setVisible(true);
+                    this.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(this, "密码错误！");
+                    Password_Password_Field.setText("");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "用户名不存在！");
+                Username_Formatted_Field.setText("");
+                Password_Password_Field.setText("");
+            }
+        } catch (Exception e) { // 改为捕获所有Exception
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "登录失败：" + e.getMessage());
+        } finally {
+            JDBCUtils.closeResources(conn, pstmt, rs);
+        }
     }
     /**
      * @param args the command line arguments

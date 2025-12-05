@@ -49,4 +49,10 @@ public interface UserDao {
     //创建用户表
     public void createUserTable();
 
+    //验证登录凭据方法
+    boolean validateCredentials(String userName, String password);
+
+    //检查用户表是否存在方法
+    boolean isUserTableExists();
+
 }

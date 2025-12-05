@@ -35,7 +35,7 @@ public class CourseManagerFrame extends javax.swing.JFrame {
     public CourseManagerFrame() {
         initComponents();
         //初始化Service层和模型
-        CourseDao courseDao=new CourseDaoImpl();
+        CourseDao courseDao=new CourseDaoImpl();//将Dao层放到这里是什么意思呢？
         this.courseService =new CourseServiceImpl(courseDao);
         this.tableModel =(DefaultTableModel) TableCourse.getModel();
         //启动时加载所有课程数据

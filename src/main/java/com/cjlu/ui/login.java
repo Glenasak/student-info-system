@@ -100,10 +100,10 @@ public class login extends javax.swing.JFrame {
         String username = Username_Formatted_Field.getText().trim(); // trim()去除前后空格
         String password = new String(Password_Password_Field.getPassword()); // 密码框用getPassword()获取字符数组，转成字符串
 
-        // 2. 简单的非空校验（防止空输入）
-        if (username.isEmpty() || password.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "用户名或密码不能为空！");
-            return; // 校验不通过，直接返回
+    // 2. 简单的非空校验（防止空输入）
+    if (username.isEmpty() || password.isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, "用户名或密码不能为空！");
+        return; // 校验不通过，直接返回
     }//GEN-LAST:event_Login_ButtonActionPerformed
     if ("admin".equals(username) && "123456".equals(password)) {
         JOptionPane.showMessageDialog(this, "登录成功！");

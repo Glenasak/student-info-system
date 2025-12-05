@@ -538,4 +538,62 @@ public class UserDaoImpl implements com.cjlu.dao.UserDao {
         }
     }
 
+    //验证登录凭据
+    @Override
+    public boolean validateCredentials(String userName, String password) {
+        try{
+            //获取数据库连接
+            connection = com.cjlu.util.JDBCUtils.getConnection();
+
+            //准备SQL语句
+            String sql = "SELECT * FROM users WHERE user_name = ? AND password = ?";
+
+            //执行查询
+            preparedStatement = (PreparedStatement) connection.prepareStatement(sql);
+            preparedStatement.setString(1, userName);
+            preparedStatement.setString(2, password);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            boolean isValid = resultSet.next();
+
+            //关闭资源
+            com.cjlu.util.JDBCUtils.closeResources(connection, preparedStatement, resultSet);
+
+            return isValid;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            //日志
+            Logger logger = LoggerFactory.getLogger(UserDaoImpl.class);
+            logger.error("Error validating credentials for userName: " + userName, e);
+            //关闭资源
+            com.cjlu.util.JDBCUtils.closeResources(connection, preparedStatement);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isUserTableExists() {
+        try{
+            //获取数据库连接
+            connection = com.cjlu.util.JDBCUtils.getConnection();
+
+            //准备SQL语句
+            String sql = "SELECT 1 FROM users FETCH FIRST ROW ONLY";
+
+            //执行查询
+            preparedStatement = (PreparedStatement) connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            //如果查询成功，说明表存在
+            com.cjlu.util.JDBCUtils.closeResources(connection, preparedStatement, resultSet);
+            return true;
+
+        } catch (Exception e) {
+            //如果捕获异常，说明表不存在
+            com.cjlu.util.JDBCUtils.closeResources(connection, preparedStatement);
+            return false;
+        }
+    }
+
 }

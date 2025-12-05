@@ -18,8 +18,18 @@ public class UserServiceImpl implements UserService {
 
     //用户注册方法
     @Override
-    public void registerUser(String username, String password, String email) {
+    public void registerUser(String username, String password, String email) throws Exception {
         try{
+            //检查用户表是否存在，若不存在则创建
+            if(!userDao.isUserTableExists()){
+                userDao.createUserTable();
+                logger.info("用户表不存在，已创建新用户表");
+            }
+            //检查用户名是否已存在
+            if(userDao.isUserNameExists(username)){
+                logger.warn("用户注册失败，用户名已存在: {}", username);
+                throw new Exception("用户名已存在");
+            }
             userDao.addUser(username, password, email);
             logger.info("用户注册成功: {}", username);
         }catch(Exception e){
@@ -138,6 +148,52 @@ public class UserServiceImpl implements UserService {
             return exists;
         }catch(Exception e){
             logger.error("检查用户名是否存在失败: {}", username, e);
+            throw e;
+        }
+    }
+
+    //验证登录方法
+    @Override
+    public boolean validateLogin(String userName, String password) {
+        try{
+            boolean valid = userDao.validateCredentials(userName, password);
+            logger.info("验证登录凭据成功: {}", userName);
+            return valid;
+        }catch(Exception e){
+            logger.error("验证登录凭据失败: {}", userName, e);
+            throw e;
+        }
+    }
+
+    public void createUserTable() {
+        try{
+            userDao.createUserTable();
+            logger.info("创建用户表成功");
+        }catch(Exception e){
+            logger.error("创建用户表失败", e);
+            throw e;
+        }
+    }
+
+    public String getUserRoleByName(String userName) {
+        try{
+            String role = userDao.getUserRoleByName(userName);
+            logger.info("获取用户角色成功: {}", userName);
+            return role;
+        }catch(Exception e){
+            logger.error("获取用户角色失败: {}", userName, e);
+            throw e;
+        }
+    }
+
+    //根据用户名获取用户ID
+    public Integer getUserIdByName(String userName) {
+        try{
+            Integer userId = userDao.getUserIdByName(userName);
+            logger.info("获取用户ID成功: {}", userName);
+            return userId;
+        }catch(Exception e){
+            logger.error("获取用户ID失败: {}", userName, e);
             throw e;
         }
     }

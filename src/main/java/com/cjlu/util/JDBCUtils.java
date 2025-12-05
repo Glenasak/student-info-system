@@ -4,9 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import org.apache.commons.dbcp.BasicDataSource;
-//这个地方用的DBCP连接池来避免反复开关数据库
-//怎么用自己去查资料吧
+import org.apache.commons.dbcp2.BasicDataSource;
 
 public class JDBCUtils {
     //数据库连接池对象
@@ -15,20 +13,19 @@ public class JDBCUtils {
 
     //配珠置数据库连接池
     static{
-        dataSource = new BasicDataSource();
-        dataSource.setUrl("jdbc:derby:MyDB;create=true");
-        //按理来说嵌入式不应该有密码
-        //但为什么我设置了一个密码呢？
-        //因为我疯啦！！！
-        dataSource.setUsername("Admin"); 
-        dataSource.setPassword("123456");
-
-        //配置连接池参数
-        //怎么依赖更新后把初始连接数量的设置去掉了？？？
-        dataSource.setMaxActive(5);
-        dataSource.setMaxIdle(5);
-        dataSource.setMinIdle(2);
-        dataSource.setMaxWait(5000);
+    dataSource = new BasicDataSource();
+        // 1. 补充驱动类名（核心修复）
+        // 新版 Derby 的 jar 中通过 ServiceLoader 注册驱动，实际实现类为 AutoloadedDriver
+        dataSource.setDriverClassName("org.apache.derby.iapi.jdbc.AutoloadedDriver");
+    // 2. 原有 URL/用户名/密码配置
+    dataSource.setUrl("jdbc:derby:MyDB;create=true");
+    dataSource.setUsername("Admin"); 
+    dataSource.setPassword("123456");
+    // 3. 连接池参数（注意：DBCP 1.x 中 maxActive 对应最大连接数，无需修改）
+    dataSource.setMaxIdle(5);
+    dataSource.setMaxIdle(5);
+    dataSource.setMinIdle(2);
+    dataSource.setMaxWaitMillis(5000);
     }
 
     //获取数据库连接的方法

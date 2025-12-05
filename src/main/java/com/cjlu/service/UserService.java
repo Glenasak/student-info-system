@@ -2,7 +2,7 @@ package com.cjlu.service;
 
 public interface UserService {
     //用户注册方法
-    void registerUser(String username, String password, String role);
+    void registerUser(String username, String password, String role) throws Exception;
 
     //用户登录方法
     boolean loginUser(String username, String password);
@@ -30,4 +30,10 @@ public interface UserService {
 
     //检查用户名是否存在方法
     boolean isUsernameExists(String username);
+
+    //验证登录凭据方法
+    boolean validateLogin(String userName, String password);
+
+    //创建用户表方法
+    void createUserTable();
 }

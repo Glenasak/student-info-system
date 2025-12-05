@@ -1,59 +1,84 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
-package com.cjlu.ui;
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
 
-import java.awt.BorderLayout;
-import javax.swing.JOptionPane;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author 孙心坚
  */
+package com.cjlu.ui;
+import com.cjlu.util.JDBCUtils;
+import java.awt.CardLayout;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 public class MainFrame extends javax.swing.JFrame {
     private String currentLoginUser;
-    /**
-     * Creates new form MainFrame
-     */
-public MainFrame() {
-    initComponents();
+    private CardLayout studentCardLayout; // 学生管理标签页的CardLayout
 
-}
+    public MainFrame() {
+        initComponents();
+        loadStudentData(); // 初始化加载学生数据
+    }
+
     public MainFrame(String loginUser) {
         initComponents();
-        this.currentLoginUser = loginUser; // 保存登录用户名
-        showLoginUserInfo(); // 调用方法显示用户信息
+        this.currentLoginUser = loginUser;
+        showLoginUserInfo();
+        loadStudentData();
     }
+
+    // 加载学生数据（原方法保留）
+    private void loadStudentData() {
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        model.setRowCount(0);
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = JDBCUtils.getConnection();
+            String sql = "SELECT * FROM students";
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                Object[] row = {
+                    rs.getString("student_id"),
+                    rs.getString("name"),
+                    rs.getString("gender"),
+                    rs.getInt("age"),
+                    rs.getString("class_name"),
+                    rs.getString("phone"),
+                    rs.getString("major"),
+                    rs.getString("admission_date"),
+                    rs.getString("email")
+                };
+                model.addRow(row);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "加载学生数据失败：" + e.getMessage());
+        } finally {
+            JDBCUtils.closeResources(conn, pstmt, rs);
+        }
+    }
+
     private void showLoginUserInfo() {
-    if (currentLoginUser != null && !currentLoginUser.isEmpty()) {
-        // 给“当前用户”菜单下的菜单项设置文本（显示用户名）
-        jMenuItem5.setText("欢迎登录：" + currentLoginUser);
-        // 可选：设置菜单项不可点击（仅显示用）
-        jMenuItem5.setEnabled(false);
+        if (currentLoginUser != null && !currentLoginUser.isEmpty()) {
+            jMenuItem5.setText("欢迎登录：" + currentLoginUser);
+            jMenuItem5.setEnabled(false);
+        }
     }
-}
 
-// 初始化“学生管理”标签页的组件
-// 初始化“学生管理”标签页的组件（修改后）
-
-// 给学生管理按钮绑定点击事件
-
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jButton5 = new javax.swing.JButton();
-        jMenuBar2 = new javax.swing.JMenuBar();
-        jMenu4 = new javax.swing.JMenu();
-        jMenu5 = new javax.swing.JMenu();
-        jMenuBar3 = new javax.swing.JMenuBar();
-        jMenu6 = new javax.swing.JMenu();
-        jMenu7 = new javax.swing.JMenu();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jButton7 = new javax.swing.JButton();
@@ -61,19 +86,60 @@ public MainFrame() {
         jButton8 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jButton9 = new javax.swing.JButton();
-        jPanel4 = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel(); // 学生管理标签页（CardLayout容器）
+        ListCard = new javax.swing.JPanel(); // 学生列表卡片
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel5 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
-        jPanel6 = new javax.swing.JPanel();
-        jButton6 = new javax.swing.JButton();
-        jPanel7 = new javax.swing.JPanel();
         jButton2 = new javax.swing.JButton();
-        jPanel9 = new javax.swing.JPanel();
-        jButton3 = new javax.swing.JButton();
-        jPanel8 = new javax.swing.JPanel();
         jButton4 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
+        AddCard = new javax.swing.JPanel(); // 添加学生卡片
+        jLabel2 = new javax.swing.JLabel();
+        txtStudentID = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        txtName = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        txtGender = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        txtAge = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        txtClassName = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        txtPhone = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        txtMajor = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        txtAdmissionDate = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        txtEmail = new javax.swing.JTextField();
+        btnAddBack = new javax.swing.JButton();
+        btnAddSave = new javax.swing.JButton();
+        jLabel11 = new javax.swing.JLabel();
+        UpdateCard = new javax.swing.JPanel(); // 修改学生卡片
+        jLabel12 = new javax.swing.JLabel();
+        txtStudentID1 = new javax.swing.JTextField();
+        jLabel13 = new javax.swing.JLabel();
+        txtName1 = new javax.swing.JTextField();
+        jLabel14 = new javax.swing.JLabel();
+        txtGender1 = new javax.swing.JTextField();
+        jLabel15 = new javax.swing.JLabel();
+        txtAge1 = new javax.swing.JTextField();
+        jLabel16 = new javax.swing.JLabel();
+        txtClassName1 = new javax.swing.JTextField();
+        jLabel17 = new javax.swing.JLabel();
+        txtPhone1 = new javax.swing.JTextField();
+        jLabel18 = new javax.swing.JLabel();
+        txtMajor1 = new javax.swing.JTextField();
+        jLabel19 = new javax.swing.JLabel();
+        txtAdmissionDate1 = new javax.swing.JTextField();
+        jLabel20 = new javax.swing.JLabel();
+        txtEmail1 = new javax.swing.JTextField();
+        btnAddBack1 = new javax.swing.JButton();
+        btnAddSave1 = new javax.swing.JButton();
+        jLabel21 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -85,24 +151,11 @@ public MainFrame() {
         jMenu8 = new javax.swing.JMenu();
         jMenuItem5 = new javax.swing.JMenuItem();
 
-        jButton5.setText("重置查询");
-
-        jMenu4.setText("File");
-        jMenuBar2.add(jMenu4);
-
-        jMenu5.setText("Edit");
-        jMenuBar2.add(jMenu5);
-
-        jMenu6.setText("File");
-        jMenuBar3.add(jMenu6);
-
-        jMenu7.setText("Edit");
-        jMenuBar3.add(jMenu7);
-
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("学生信息管理系统");
-        setPreferredSize(new java.awt.Dimension(800, 800));
+        setPreferredSize(new java.awt.Dimension(900, 700));
 
+        // 课程管理标签页
         jButton7.setText("进入CourseManagerFrame");
         jButton7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -110,9 +163,9 @@ public MainFrame() {
             }
         });
         jPanel1.add(jButton7);
-
         jTabbedPane1.addTab("课程管理", jPanel1);
 
+        // 成绩管理标签页
         jButton8.setText("进入ScoreManagerFrame");
         jButton8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -120,9 +173,9 @@ public MainFrame() {
             }
         });
         jPanel2.add(jButton8);
-
         jTabbedPane1.addTab("成绩管理", jPanel2);
 
+        // 数据统计标签页
         jButton9.setText("进入StatisticManageFrame");
         jButton9.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -130,63 +183,28 @@ public MainFrame() {
             }
         });
         jPanel3.add(jButton9);
-
         jTabbedPane1.addTab("数据统计", jPanel3);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
+        // ---------------- 学生管理标签页（CardLayout设置） ----------------
+        studentCardLayout = new CardLayout();
+        jPanel4.setLayout(studentCardLayout);
 
-            },
-            new String [] {
+        // 1. 学生列表卡片（ListCard）
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object[][]{},
+            new String[]{
                 "student_id", "name", "gender", "age", "class_name", "phone", "major", "admission_date", "email"
             }
         ));
         jScrollPane2.setViewportView(jTable1);
 
+        // 列表卡片的按钮布局
         jButton1.setText("添加学生");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
-
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(jButton1)
-                .addGap(0, 22, Short.MAX_VALUE))
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(jButton1)
-                .addGap(0, 77, Short.MAX_VALUE))
-        );
-
-        jButton6.setText("重置查询");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(30, Short.MAX_VALUE))
-        );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addComponent(jButton6)
-                .addGap(0, 77, Short.MAX_VALUE))
-        );
 
         jButton2.setText("修改学生");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -195,20 +213,12 @@ public MainFrame() {
             }
         });
 
-        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
-        jPanel7.setLayout(jPanel7Layout);
-        jPanel7Layout.setHorizontalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 22, Short.MAX_VALUE))
-        );
-        jPanel7Layout.setVerticalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
-                .addComponent(jButton2)
-                .addGap(0, 77, Short.MAX_VALUE))
-        );
+        jButton4.setText("查询学生");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("删除学生");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -217,83 +227,313 @@ public MainFrame() {
             }
         });
 
-        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
-        jPanel9.setLayout(jPanel9Layout);
-        jPanel9Layout.setHorizontalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 34, Short.MAX_VALUE))
-        );
-        jPanel9Layout.setVerticalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
-                .addComponent(jButton3)
-                .addGap(0, 77, Short.MAX_VALUE))
-        );
-
-        jButton4.setText("查询学生");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        jButton6.setText("重置查询");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                jButton6ActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 22, Short.MAX_VALUE))
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel5Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jButton1)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jButton2)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jButton4)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jButton3)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jButton6)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addComponent(jButton4)
-                .addGap(0, 77, Short.MAX_VALUE))
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel5Layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton1)
+                        .addComponent(jButton2)
+                        .addComponent(jButton4)
+                        .addComponent(jButton3)
+                        .addComponent(jButton6))
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1290, Short.MAX_VALUE)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        javax.swing.GroupLayout ListCardLayout = new javax.swing.GroupLayout(ListCard);
+        ListCard.setLayout(ListCardLayout);
+        ListCardLayout.setHorizontalGroup(
+            ListCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 850, Short.MAX_VALUE)
+                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        ListCardLayout.setVerticalGroup(
+            ListCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(ListCardLayout.createSequentialGroup()
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(16, Short.MAX_VALUE))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE))
         );
+        jPanel4.add(ListCard, "list");
+
+        // 2. 添加学生卡片（AddCard）
+        jLabel11.setFont(new java.awt.Font("Microsoft Tai Le", 1, 18));
+        jLabel11.setText("添加学生");
+
+        jLabel2.setText("学号");
+        jLabel3.setText("姓名");
+        jLabel4.setText("性别");
+        jLabel5.setText("年龄");
+        jLabel6.setText("班级");
+        jLabel7.setText("电话");
+        jLabel8.setText("专业");
+        jLabel9.setText("入学日期");
+        jLabel10.setText("邮箱");
+
+        btnAddBack.setText("返回");
+        btnAddBack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddBackActionPerformed(evt);
+            }
+        });
+
+        btnAddSave.setText("保存");
+        btnAddSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddSaveActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout AddCardLayout = new javax.swing.GroupLayout(AddCard);
+        AddCard.setLayout(AddCardLayout);
+        AddCardLayout.setHorizontalGroup(
+            AddCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(AddCardLayout.createSequentialGroup()
+                    .addGap(30, 30, 30)
+                    .addGroup(AddCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(AddCardLayout.createSequentialGroup()
+                            .addComponent(jLabel2)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtStudentID, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(50, 50, 50)
+                            .addComponent(jLabel3)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(AddCardLayout.createSequentialGroup()
+                            .addComponent(jLabel4)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtGender, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(50, 50, 50)
+                            .addComponent(jLabel5)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtAge, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(AddCardLayout.createSequentialGroup()
+                            .addComponent(jLabel6)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtClassName, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(50, 50, 50)
+                            .addComponent(jLabel7)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(AddCardLayout.createSequentialGroup()
+                            .addComponent(jLabel8)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtMajor, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(50, 50, 50)
+                            .addComponent(jLabel9)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtAdmissionDate, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(AddCardLayout.createSequentialGroup()
+                            .addComponent(jLabel10)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(AddCardLayout.createSequentialGroup()
+                            .addGap(300, 300, 300)
+                            .addComponent(btnAddSave, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(50, 50, 50)
+                            .addComponent(btnAddBack, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(AddCardLayout.createSequentialGroup()
+                    .addGap(380, 380, 380)
+                    .addComponent(jLabel11)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        AddCardLayout.setVerticalGroup(
+            AddCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(AddCardLayout.createSequentialGroup()
+                    .addGap(30, 30, 30)
+                    .addComponent(jLabel11)
+                    .addGap(30, 30, 30)
+                    .addGroup(AddCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel2)
+                        .addComponent(txtStudentID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel3)
+                        .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGap(20, 20, 20)
+                    .addGroup(AddCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel4)
+                        .addComponent(txtGender, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel5)
+                        .addComponent(txtAge, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGap(20, 20, 20)
+                    .addGroup(AddCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel6)
+                        .addComponent(txtClassName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel7)
+                        .addComponent(txtPhone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGap(20, 20, 20)
+                    .addGroup(AddCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel8)
+                        .addComponent(txtMajor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel9)
+                        .addComponent(txtAdmissionDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGap(20, 20, 20)
+                    .addGroup(AddCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel10)
+                        .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGap(50, 50, 50)
+                    .addGroup(AddCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnAddSave, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnAddBack, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addContainerGap(200, Short.MAX_VALUE))
+        );
+        jPanel4.add(AddCard, "add");
+
+        // 3. 修改学生卡片（UpdateCard）
+        jLabel21.setFont(new java.awt.Font("Microsoft Tai Le", 1, 18));
+        jLabel21.setText("修改学生");
+
+        jLabel12.setText("学号");
+        jLabel13.setText("姓名");
+        jLabel14.setText("性别");
+        jLabel15.setText("年龄");
+        jLabel16.setText("班级");
+        jLabel17.setText("电话");
+        jLabel18.setText("专业");
+        jLabel19.setText("入学日期");
+        jLabel20.setText("邮箱");
+
+        btnAddBack1.setText("返回");
+        btnAddBack1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddBack1ActionPerformed(evt);
+            }
+        });
+
+        btnAddSave1.setText("更新");
+        btnAddSave1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddSave1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout UpdateCardLayout = new javax.swing.GroupLayout(UpdateCard);
+        UpdateCard.setLayout(UpdateCardLayout);
+        UpdateCardLayout.setHorizontalGroup(
+            UpdateCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(UpdateCardLayout.createSequentialGroup()
+                    .addGap(30, 30, 30)
+                    .addGroup(UpdateCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(UpdateCardLayout.createSequentialGroup()
+                            .addComponent(jLabel12)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtStudentID1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(50, 50, 50)
+                            .addComponent(jLabel13)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtName1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(UpdateCardLayout.createSequentialGroup()
+                            .addComponent(jLabel14)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtGender1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(50, 50, 50)
+                            .addComponent(jLabel15)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtAge1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(UpdateCardLayout.createSequentialGroup()
+                            .addComponent(jLabel16)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtClassName1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(50, 50, 50)
+                            .addComponent(jLabel17)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtPhone1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(UpdateCardLayout.createSequentialGroup()
+                            .addComponent(jLabel18)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtMajor1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(50, 50, 50)
+                            .addComponent(jLabel19)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtAdmissionDate1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(UpdateCardLayout.createSequentialGroup()
+                            .addComponent(jLabel20)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtEmail1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(UpdateCardLayout.createSequentialGroup()
+                            .addGap(300, 300, 300)
+                            .addComponent(btnAddSave1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(50, 50, 50)
+                            .addComponent(btnAddBack1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(UpdateCardLayout.createSequentialGroup()
+                    .addGap(380, 380, 380)
+                    .addComponent(jLabel21)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        UpdateCardLayout.setVerticalGroup(
+            UpdateCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(UpdateCardLayout.createSequentialGroup()
+                    .addGap(30, 30, 30)
+                    .addComponent(jLabel21)
+                    .addGap(30, 30, 30)
+                    .addGroup(UpdateCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel12)
+                        .addComponent(txtStudentID1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel13)
+                        .addComponent(txtName1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGap(20, 20, 20)
+                    .addGroup(UpdateCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel14)
+                        .addComponent(txtGender1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel15)
+                        .addComponent(txtAge1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGap(20, 20, 20)
+                    .addGroup(UpdateCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel16)
+                        .addComponent(txtClassName1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel17)
+                        .addComponent(txtPhone1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGap(20, 20, 20)
+                    .addGroup(UpdateCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel18)
+                        .addComponent(txtMajor1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel19)
+                        .addComponent(txtAdmissionDate1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGap(20, 20, 20)
+                    .addGroup(UpdateCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel20)
+                        .addComponent(txtEmail1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGap(50, 50, 50)
+                    .addGroup(UpdateCardLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnAddSave1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnAddBack1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addContainerGap(200, Short.MAX_VALUE))
+        );
+        jPanel4.add(UpdateCard, "update");
+        // ---------------- 学生管理标签页结束 ----------------
 
         jTabbedPane1.addTab("学生管理", jPanel4);
+        getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
-        getContentPane().add(jTabbedPane1, java.awt.BorderLayout.PAGE_START);
-
+        // 菜单栏
         jMenu1.setText("系统管理");
-
         jMenuItem1.setText("密码修改");
         jMenu1.add(jMenuItem1);
-
         jMenuItem2.setText("退出系统");
         jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -301,172 +541,269 @@ public MainFrame() {
             }
         });
         jMenu1.add(jMenuItem2);
-
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("学生管理");
-
         jMenuItem3.setText("新增学生");
         jMenu2.add(jMenuItem3);
-
         jMenuBar1.add(jMenu2);
 
         jMenu3.setText("帮助");
-
         jMenuItem4.setText("关于系统");
         jMenu3.add(jMenuItem4);
-
         jMenuBar1.add(jMenu3);
 
         jMenu8.setText("当前用户");
-
         jMenuItem5.setText("name");
         jMenu8.add(jMenuItem5);
-
         jMenuBar1.add(jMenu8);
 
         setJMenuBar(jMenuBar1);
-
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }
+    // </editor-fold>
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-            // 1. 获取表格的模型（这里表格的Name是jTable1，以你实际的为准）
-    DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
-    // 2. 打开新增学生窗口，传递主窗口和表格模型
-    AddStudentFrame addFrame = new AddStudentFrame(MainFrame.this, tableModel);
-    // 3. 显示新增窗口
-    addFrame.setVisible(true);
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-            // 1. 获取选中行索引
-    int selectedRow = jTable1.getSelectedRow();
-    if (selectedRow == -1) {
-        JOptionPane.showMessageDialog(this, "请先选中要删除的学生行！", "提示", JOptionPane.WARNING_MESSAGE);
-        return;
+    // ---------------- 学生管理相关事件 ----------------
+    // 点击“添加学生”按钮：切换到添加卡片
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
+        studentCardLayout.show(jPanel4, "add");
+        // 清空添加表单
+        txtStudentID.setText("");
+        txtName.setText("");
+        txtGender.setText("");
+        txtAge.setText("");
+        txtClassName.setText("");
+        txtPhone.setText("");
+        txtMajor.setText("");
+        txtAdmissionDate.setText("");
+        txtEmail.setText("");
     }
 
-    // 2. 获取姓名（用于确认提示）
-    String studentName = jTable1.getValueAt(selectedRow, 1).toString();
+    // 点击“修改学生”按钮：切换到修改卡片，并填充选中行数据
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "请先选中要修改的学生行！");
+            return;
+        }
 
-    // 3. 确认删除
-    int confirm = JOptionPane.showConfirmDialog(this, "确定要删除 " + studentName + " 的信息吗？", "确认删除", JOptionPane.YES_NO_OPTION);
-    if (confirm == JOptionPane.YES_OPTION) {
-        // ❹ 只删除表格中的行，删掉同步 allStudentData 的代码
-        ((DefaultTableModel) jTable1.getModel()).removeRow(selectedRow);
-        JOptionPane.showMessageDialog(this, "删除成功！");
-    }
-    }//GEN-LAST:event_jButton3ActionPerformed
+        // 填充选中行数据到修改表单
+        txtStudentID1.setText(jTable1.getValueAt(selectedRow, 0).toString());
+        txtName1.setText(jTable1.getValueAt(selectedRow, 1).toString());
+        txtGender1.setText(jTable1.getValueAt(selectedRow, 2).toString());
+        txtAge1.setText(jTable1.getValueAt(selectedRow, 3).toString());
+        txtClassName1.setText(jTable1.getValueAt(selectedRow, 4).toString());
+        txtPhone1.setText(jTable1.getValueAt(selectedRow, 5).toString());
+        txtMajor1.setText(jTable1.getValueAt(selectedRow, 6).toString());
+        txtAdmissionDate1.setText(jTable1.getValueAt(selectedRow, 7).toString());
+        txtEmail1.setText(jTable1.getValueAt(selectedRow, 8).toString());
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-    // 1. 获取表格选中行索引（jTable1 是 Design 视图中表格的变量名，必须匹配）
-    int selectedRow = jTable1.getSelectedRow();
-    if (selectedRow == -1) {
-        JOptionPane.showMessageDialog(this, "请先选中要修改的学生行！", "提示", JOptionPane.WARNING_MESSAGE);
-        return;
-    }
-
-    // 2. 获取选中行的所有学生数据（6列，对应学号、姓名、性别、年龄、班级、联系电话）
-    Object[] studentData = new Object[6];
-    for (int i = 0; i < 6; i++) {
-        studentData[i] = jTable1.getValueAt(selectedRow, i);
+        studentCardLayout.show(jPanel4, "update");
     }
 
-    // 3. 打开修改窗口（传递4个参数：主窗口、表格模型、选中行索引、学生数据）
-    EditStudentFrame editFrame = new EditStudentFrame(
-        MainFrame.this, 
-        (DefaultTableModel) jTable1.getModel(), 
-        selectedRow, 
-        studentData
-    );
-    editFrame.setVisible(true); // 关键：显示窗口（不能少！）
-    }//GEN-LAST:event_jButton2ActionPerformed
+    // 点击“删除学生”按钮（原逻辑保留）
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "请先选中要删除的学生行！");
+            return;
+        }
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-            // 1. 弹出输入框，获取用户输入的查询关键词（学号或姓名）
-    String keyword = JOptionPane.showInputDialog(this, "请输入学号或姓名查询：");
-    if (keyword == null || keyword.trim().isEmpty()) {
-        JOptionPane.showMessageDialog(this, "查询关键词不能为空！", "提示", JOptionPane.WARNING_MESSAGE);
-        return;
-    }
-    keyword = keyword.trim().toLowerCase(); // 转为小写，忽略大小写查询
-
-    // 2. 获取表格模型和原始数据（先保存原始数据，方便后续重置）
-    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-    int rowCount = model.getRowCount();
-
-    // 3. 遍历表格所有行，筛选符合条件的行（学号包含关键词 或 姓名包含关键词）
-    for (int i = rowCount - 1; i >= 0; i--) { // 倒序遍历，避免删除行后索引错乱
-        // 获取当前行的学号和姓名（转为小写，忽略大小写）
-        String studentId = model.getValueAt(i, 0).toString().toLowerCase();
-        String studentName = model.getValueAt(i, 1).toString().toLowerCase();
-
-        // 若学号和姓名都不包含关键词，删除当前行（即隐藏不匹配数据）
-        if (!studentId.contains(keyword) && !studentName.contains(keyword)) {
-            model.removeRow(i);
+        String studentName = jTable1.getValueAt(selectedRow, 1).toString();
+        int confirm = JOptionPane.showConfirmDialog(this, "确定要删除 " + studentName + " 的信息吗？");
+        if (confirm == JOptionPane.YES_OPTION) {
+            // 数据库删除操作（补充）
+            String studentId = jTable1.getValueAt(selectedRow, 0).toString();
+            Connection conn = null;
+            PreparedStatement pstmt = null;
+            try {
+                conn = JDBCUtils.getConnection();
+                String sql = "DELETE FROM students WHERE student_id = ?";
+                pstmt = conn.prepareStatement(sql);
+                pstmt.setString(1, studentId);
+                pstmt.executeUpdate();
+                ((DefaultTableModel) jTable1.getModel()).removeRow(selectedRow);
+                JOptionPane.showMessageDialog(this, "删除成功！");
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "删除失败：" + e.getMessage());
+            } finally {
+                JDBCUtils.closeResources(conn, pstmt, null);
+            }
         }
     }
 
-    // 4. 提示查询结果
-    int resultCount = model.getRowCount();
-    JOptionPane.showMessageDialog(this, "查询完成！共找到 " + resultCount + " 条匹配数据", "查询结果", JOptionPane.INFORMATION_MESSAGE);
+    // 点击“查询学生”按钮（原逻辑保留）
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {
+        String keyword = JOptionPane.showInputDialog(this, "请输入学号或姓名查询：");
+        if (keyword == null || keyword.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "查询关键词不能为空！");
+            return;
+        }
+        keyword = keyword.trim().toLowerCase();
 
-    }//GEN-LAST:event_jButton4ActionPerformed
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        int rowCount = model.getRowCount();
+        for (int i = rowCount - 1; i >= 0; i--) {
+            String studentId = model.getValueAt(i, 0).toString().toLowerCase();
+            String studentName = model.getValueAt(i, 1).toString().toLowerCase();
+            if (!studentId.contains(keyword) && !studentName.contains(keyword)) {
+                model.removeRow(i);
+            }
+        }
+        JOptionPane.showMessageDialog(this, "查询完成！共找到 " + model.getRowCount() + " 条匹配数据");
+    }
 
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
+    // 点击“重置查询”按钮（原逻辑保留）
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {
+        loadStudentData();
+        JOptionPane.showMessageDialog(this, "已重置查询，显示所有学生数据！");
+    }
 
-    // 1. 重新创建表格模型（恢复原始列名和示例数据）
-    String[] columnNames = {"学号", "姓名", "性别", "年龄", "班级", "联系电话"};
-    Object[][] rowData = {
-        {"2025001", "张三", "男", 18, "计算机2班", "13800138001"},
-        {"2025002", "李四", "女", 19, "软件3班", "13900139002"},
-        {"2025003", "王五", "男", 18, "网络1班", "13700137003"}
-    };
-    DefaultTableModel newModel = new DefaultTableModel(rowData, columnNames);
+    // 点击“添加学生-保存”按钮：插入数据库并更新表格
+    private void btnAddSaveActionPerformed(java.awt.event.ActionEvent evt) {
+        // 获取表单数据
+        String studentId = txtStudentID.getText().trim();
+        String name = txtName.getText().trim();
+        String gender = txtGender.getText().trim();
+        String age = txtAge.getText().trim();
+        String className = txtClassName.getText().trim();
+        String phone = txtPhone.getText().trim();
+        String major = txtMajor.getText().trim();
+        String admissionDate = txtAdmissionDate.getText().trim();
+        String email = txtEmail.getText().trim();
 
-    // 2. 替换表格的模型（恢复所有数据）
-    jTable1.setModel(newModel);
+        // 非空校验
+        if (studentId.isEmpty() || name.isEmpty() || gender.isEmpty() || age.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "学号、姓名、性别、年龄不能为空！");
+            return;
+        }
 
-    JOptionPane.showMessageDialog(this, "已重置查询，显示所有学生数据！", "提示", JOptionPane.INFORMATION_MESSAGE);
+        // 插入数据库
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            conn = JDBCUtils.getConnection();
+            String sql = "INSERT INTO students (student_id, name, gender, age, class_name, phone, major, admission_date, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, studentId);
+            pstmt.setString(2, name);
+            pstmt.setString(3, gender);
+            pstmt.setInt(4, Integer.parseInt(age));
+            pstmt.setString(5, className);
+            pstmt.setString(6, phone);
+            pstmt.setString(7, major);
+            pstmt.setString(8, admissionDate);
+            pstmt.setString(9, email);
+            pstmt.executeUpdate();
 
-    }//GEN-LAST:event_jButton6ActionPerformed
+            // 更新表格
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            model.addRow(new Object[]{studentId, name, gender, Integer.parseInt(age), className, phone, major, admissionDate, email});
+            JOptionPane.showMessageDialog(this, "添加成功！");
 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-    // 假设存在CourseManagerFrame类
-    CourseManagerFrame courseFrame = new CourseManagerFrame();
-    courseFrame.setVisible(true);
-    }//GEN-LAST:event_jButton7ActionPerformed
+            // 切回列表卡片
+            studentCardLayout.show(jPanel4, "list");
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "添加失败：" + e.getMessage());
+        } finally {
+            JDBCUtils.closeResources(conn, pstmt, null);
+        }
+    }
 
-    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        // TODO add your handling code here:
-ScoreManagerJFrame scoreFrame=new ScoreManagerJFrame();
-scoreFrame.setVisible(true);
-    }//GEN-LAST:event_jButton8ActionPerformed
+    // 点击“添加学生-返回”按钮：切回列表卡片
+    private void btnAddBackActionPerformed(java.awt.event.ActionEvent evt) {
+        studentCardLayout.show(jPanel4, "list");
+    }
 
-    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
-        // TODO add your handling code here:
-        StatisticManageFrame statisticFrame=new StatisticManageFrame();
+    // 点击“修改学生-更新”按钮：更新数据库并刷新表格
+    private void btnAddSave1ActionPerformed(java.awt.event.ActionEvent evt) {
+        // 获取表单数据
+        String studentId = txtStudentID1.getText().trim();
+        String name = txtName1.getText().trim();
+        String gender = txtGender1.getText().trim();
+        String age = txtAge1.getText().trim();
+        String className = txtClassName1.getText().trim();
+        String phone = txtPhone1.getText().trim();
+        String major = txtMajor1.getText().trim();
+        String admissionDate = txtAdmissionDate1.getText().trim();
+        String email = txtEmail1.getText().trim();
+
+        // 非空校验
+        if (name.isEmpty() || gender.isEmpty() || age.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "姓名、性别、年龄不能为空！");
+            return;
+        }
+
+        // 更新数据库
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            conn = JDBCUtils.getConnection();
+            String sql = "UPDATE students SET name=?, gender=?, age=?, class_name=?, phone=?, major=?, admission_date=?, email=? WHERE student_id=?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, name);
+            pstmt.setString(2, gender);
+            pstmt.setInt(3, Integer.parseInt(age));
+            pstmt.setString(4, className);
+            pstmt.setString(5, phone);
+            pstmt.setString(6, major);
+            pstmt.setString(7, admissionDate);
+            pstmt.setString(8, email);
+            pstmt.setString(9, studentId);
+            pstmt.executeUpdate();
+
+            // 更新表格选中行
+            int selectedRow = jTable1.getSelectedRow();
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            model.setValueAt(name, selectedRow, 1);
+            model.setValueAt(gender, selectedRow, 2);
+            model.setValueAt(Integer.parseInt(age), selectedRow, 3);
+            model.setValueAt(className, selectedRow, 4);
+            model.setValueAt(phone, selectedRow, 5);
+            model.setValueAt(major, selectedRow, 6);
+            model.setValueAt(admissionDate, selectedRow, 7);
+            model.setValueAt(email, selectedRow, 8);
+            JOptionPane.showMessageDialog(this, "修改成功！");
+
+            // 切回列表卡片
+            studentCardLayout.show(jPanel4, "list");
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "修改失败：" + e.getMessage());
+        } finally {
+            JDBCUtils.closeResources(conn, pstmt, null);
+        }
+    }
+
+    // 点击“修改学生-返回”按钮：切回列表卡片
+    private void btnAddBack1ActionPerformed(java.awt.event.ActionEvent evt) {
+        studentCardLayout.show(jPanel4, "list");
+    }
+    // ---------------- 其他事件（原逻辑保留） ----------------
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {
+        System.exit(0);
+    }
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {
+        CourseManagerFrame courseFrame = new CourseManagerFrame();
+        courseFrame.setVisible(true);
+    }
+
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {
+        ScoreManagerJFrame scoreFrame = new ScoreManagerJFrame();
+        scoreFrame.setVisible(true);
+    }
+
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {
+        StatisticManageFrame statisticFrame = new StatisticManageFrame();
         statisticFrame.setVisible(true);
-    }//GEN-LAST:event_jButton9ActionPerformed
+    }
 
-    /**
-     * @param args the command line arguments
-     */
+
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -474,47 +811,59 @@ scoreFrame.setVisible(true);
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(MainFrame_old.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        //</editor-fold>
 
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MainFrame().setVisible(true);
+                new MainFrame_old().setVisible(true);
             }
         });
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+
+    // Variables declaration - do not modify
+    private javax.swing.JPanel AddCard;
+    private javax.swing.JPanel ListCard;
+    private javax.swing.JPanel UpdateCard;
+    private javax.swing.JButton btnAddBack;
+    private javax.swing.JButton btnAddBack1;
+    private javax.swing.JButton btnAddSave;
+    private javax.swing.JButton btnAddSave1;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenu jMenu4;
-    private javax.swing.JMenu jMenu5;
-    private javax.swing.JMenu jMenu6;
-    private javax.swing.JMenu jMenu7;
     private javax.swing.JMenu jMenu8;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuBar jMenuBar2;
-    private javax.swing.JMenuBar jMenuBar3;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
@@ -525,13 +874,26 @@ scoreFrame.setVisible(true);
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
-    private javax.swing.JPanel jPanel9;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable1;
-    // End of variables declaration//GEN-END:variables
+    private javax.swing.JTextField txtAdmissionDate;
+    private javax.swing.JTextField txtAdmissionDate1;
+    private javax.swing.JTextField txtAge;
+    private javax.swing.JTextField txtAge1;
+    private javax.swing.JTextField txtClassName;
+    private javax.swing.JTextField txtClassName1;
+    private javax.swing.JTextField txtEmail;
+    private javax.swing.JTextField txtEmail1;
+    private javax.swing.JTextField txtGender;
+    private javax.swing.JTextField txtGender1;
+    private javax.swing.JTextField txtMajor;
+    private javax.swing.JTextField txtMajor1;
+    private javax.swing.JTextField txtName;
+    private javax.swing.JTextField txtName1;
+    private javax.swing.JTextField txtPhone;
+    private javax.swing.JTextField txtPhone1;
+    private javax.swing.JTextField txtStudentID;
+    private javax.swing.JTextField txtStudentID1;
+    // End of variables declaration
 }

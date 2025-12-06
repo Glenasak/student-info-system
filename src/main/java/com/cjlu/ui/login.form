@@ -27,39 +27,39 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="label2" pref="70" max="32767" attributes="0"/>
-                  <Component id="label1" pref="70" max="32767" attributes="0"/>
+                  <Component id="label2" max="32767" attributes="0"/>
+                  <Component id="label1" min="-2" pref="70" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="Username_Formatted_Field" pref="136" max="32767" attributes="0"/>
-                  <Component id="Password_Password_Field" max="32767" attributes="0"/>
+                  <Component id="Username_Formatted_Field" max="32767" attributes="0"/>
+                  <Component id="Password_Password_Field" min="-2" pref="136" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="Login_Button" min="-2" pref="78" max="-2" attributes="0"/>
-              <EmptySpace pref="78" max="32767" attributes="0"/>
+              <EmptySpace pref="47" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="108" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
                   <Component id="label1" min="-2" pref="20" max="-2" attributes="0"/>
                   <Component id="Username_Formatted_Field" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Group type="103" groupAlignment="3" attributes="0">
+                  <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                       <Component id="Password_Password_Field" alignment="3" max="32767" attributes="0"/>
                       <Component id="Login_Button" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="label2" max="32767" attributes="0"/>
+                  <Component id="label2" min="-2" pref="23" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace pref="226" max="32767" attributes="0"/>
+              <EmptySpace pref="128" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>

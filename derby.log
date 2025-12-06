@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Sat Dec 06 14:47:13 GMT+08:00 2025:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.15.2.0 - (1873585): instance a816c00e-019a-f26a-2256-00001e6ee7e0 
+on database directory C:\我的文件\02工作\student-info-system-master\MyDB with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@33909752 
+Loaded from file:/C:/Users/q1506/.m2/repository/org/apache/derby/derby/10.15.2.0/derby-10.15.2.0.jar
+java.vendor=Oracle Corporation
+java.runtime.version=17.0.12+8-LTS-286
+user.dir=C:\我的文件\02工作\student-info-system-master
+os.name=Windows 11
+os.arch=amd64
+os.version=10.0
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

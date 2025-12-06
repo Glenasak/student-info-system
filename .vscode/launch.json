@@ -1,0 +1,85 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "App",
+            "request": "launch",
+            "mainClass": "com.cjlu.App",
+            "projectName": "student-info-system"
+        },
+        {
+            "type": "java",
+            "name": "DBtest",
+            "request": "launch",
+            "mainClass": "com.cjlu.DBtest",
+            "projectName": "student-info-system"
+        },
+        {
+            "type": "java",
+            "name": "AddStudentFrame",
+            "request": "launch",
+            "mainClass": "com.cjlu.ui.AddStudentFrame",
+            "projectName": "student-info-system"
+        },
+        {
+            "type": "java",
+            "name": "CourseManagerFrame",
+            "request": "launch",
+            "mainClass": "com.cjlu.ui.CourseManagerFrame",
+            "projectName": "student-info-system"
+        },
+        {
+            "type": "java",
+            "name": "EditStudentFrame",
+            "request": "launch",
+            "mainClass": "com.cjlu.ui.EditStudentFrame",
+            "projectName": "student-info-system"
+        },
+        {
+            "type": "java",
+            "name": "MainFrame",
+            "request": "launch",
+            "mainClass": "com.cjlu.ui.MainFrame",
+            "projectName": "student-info-system"
+        },
+        {
+            "type": "java",
+            "name": "PasswordChange",
+            "request": "launch",
+            "mainClass": "com.cjlu.ui.PasswordChange",
+            "projectName": "student-info-system"
+        },
+        {
+            "type": "java",
+            "name": "ScoreManagerJFrame",
+            "request": "launch",
+            "mainClass": "com.cjlu.ui.ScoreManagerJFrame",
+            "projectName": "student-info-system"
+        },
+        {
+            "type": "java",
+            "name": "StatisticManageFrame",
+            "request": "launch",
+            "mainClass": "com.cjlu.ui.StatisticManageFrame",
+            "projectName": "student-info-system"
+        },
+        {
+            "type": "java",
+            "name": "login",
+            "request": "launch",
+            "mainClass": "com.cjlu.ui.login",
+            "projectName": "student-info-system"
+        }
+    ]
+}

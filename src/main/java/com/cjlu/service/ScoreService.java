@@ -26,4 +26,6 @@ public interface ScoreService {
 
     //根据课程名称查询成绩信息
     public List<Scores> getScoresByCourseName(String courseName);
+
+    List<Scores> getScoresByCourseAndScoreRange(String courseName, double minScore, double maxScore);
 }

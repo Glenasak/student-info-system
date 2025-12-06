@@ -43,14 +43,18 @@ public class LocalFileLoginManager {
             System.err.println("用户名和密码不能为空！");
             return false;
         }
-        
+
         System.out.println("正在验证用户凭据...");
-        //验证登录
-        boolean isCredentialValid = false; 
-        if(userDao.getUserPassword(userDao.getUserIdByName(username))==password) {
-        	isCredentialValid = true;
+
+        // 确认用户表存在，避免第一次启动时查询抛异常
+        if (!userDao.isUserTableExists()) {
+            userDao.createUserTable();
         }
-        
+
+        // 安全获取用户信息并进行凭据校验
+        Integer userId = userDao.getUserIdByName(username);
+        String storedPassword = (userId != null) ? userDao.getUserPassword(userId) : null;
+        boolean isCredentialValid = storedPassword != null && storedPassword.equals(password);
 
         if (isCredentialValid) {
             try {
@@ -85,7 +89,7 @@ public class LocalFileLoginManager {
         }
         try {
             // 读取文件第一行（用户名）
-            String username = Files.readAllLines(loginFilePath, StandardCharsets.UTF_8).getFirst();
+            String username = Files.readAllLines(loginFilePath, StandardCharsets.UTF_8).get(0);
             return Optional.ofNullable(username.trim());
         } catch (IOException e) {
             System.err.println("读取登录文件失败: " + e.getMessage());

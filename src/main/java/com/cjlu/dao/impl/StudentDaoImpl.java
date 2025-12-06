@@ -466,7 +466,7 @@ public class StudentDaoImpl implements StudentDao {
         //根据Student类的属性来创建学生表
         try {
             //链接数据库
-            JDBCUtils.getConnection();
+            connection = JDBCUtils.getConnection();
             //创建表的SQL语句
             String createTableSQL = "CREATE TABLE Students (" +
                     "student_id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY," +
@@ -475,9 +475,9 @@ public class StudentDaoImpl implements StudentDao {
                     "gender VARCHAR(10)," +
                     "major VARCHAR(100)," +
                     "class VARCHAR(100)," +
-                    "admission_date DATE NOT NULL" +
-                    "phone VARCHAR(11) UNIQUE" +
-                    "email VARCHAR(50) UNIQUE" +
+                "admission_date DATE NOT NULL," +
+                "phone VARCHAR(11) UNIQUE," +
+                "email VARCHAR(50) UNIQUE" +
                     ")";
             //准备执行语句
             preparedStatement = connection.prepareStatement(createTableSQL);
@@ -496,4 +496,102 @@ public class StudentDaoImpl implements StudentDao {
         }
     }
 
+    //这个方法的功能是根据姓名模糊查询学生
+    public List<Student> searchStudentsByName(String name) {
+        try {
+            //调用findStudentsByName方法实现功能
+            return findStudentsByName(name);
+        } catch (Exception e) {
+            logger.error("根据姓名模糊查询学生失败: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    //这个方法的功能是根据班级查询学生
+    @Override
+    public List<Student> getStudentsByClass(String className) {
+        try {
+            //调用findStudentsByClass方法实现功能
+            return findStudentsByClass(className);
+        } catch (Exception e) {
+            logger.error("根据班级查询学生失败: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public boolean isStudentTableExists() {
+        try {
+            //获取数据库连接
+            connection = JDBCUtils.getConnection();
+
+            //检查学生表是否存在的SQL语句
+            String checkTableSQL = "SELECT 1 FROM Students FETCH FIRST ROW ONLY";
+            preparedStatement = connection.prepareStatement(checkTableSQL);
+
+            //执行查询操作
+            preparedStatement.executeQuery();
+
+            //关闭资源
+            JDBCUtils.closeResources(connection, preparedStatement, null);
+
+            return true; // 表存在
+        } catch (Exception e) {
+            logger.error("检查学生表是否存在时出错：", e);
+            e.printStackTrace();
+            //关闭资源
+            JDBCUtils.closeResources(connection, preparedStatement, null);
+            return false; // 表不存在或发生错误
+        }
+    }
+
+    //依据major和class模糊查询学生，两个属性可以为空
+    @Override
+    public List<Student> findStudentsByMajorAndClass(String major, String className) {
+        try {
+            //获取数据库连接
+            connection = JDBCUtils.getConnection();
+            StringBuilder querySQL = new StringBuilder("SELECT * FROM Students WHERE 1=1");
+            if (major != null && !major.isEmpty()) {
+                querySQL.append(" AND major = ?");
+            }
+            if (className != null && !className.isEmpty()) {
+                querySQL.append(" AND class = ?");
+            }
+            preparedStatement = connection.prepareStatement(querySQL.toString());
+            int paramIndex = 1;
+            if (major != null && !major.isEmpty()) {
+                preparedStatement.setString(paramIndex++, major);
+            }
+            if (className != null && !className.isEmpty()) {
+                preparedStatement.setString(paramIndex++, className);
+            }
+            //执行查询操作
+            var resultSet = preparedStatement.executeQuery();
+            //处理结果集
+            List<Student> students = new java.util.ArrayList<>();
+            while (resultSet.next()) {
+                Student student = new Student();
+                student.setStudentId(String.valueOf(resultSet.getInt("student_id")));
+                student.setName(resultSet.getString("name"));
+                student.setAge(resultSet.getInt("age"));
+                student.setGender(resultSet.getString("gender"));
+                student.setMajor(resultSet.getString("major"));
+                student.setClassName(resultSet.getString("class"));
+                student.setAdmissionDate(resultSet.getDate("admission_date"));
+                student.setPhone(resultSet.getString("phone"));
+                student.setEmail(resultSet.getString("email"));
+                students.add(student);
+            }
+            //关闭资源
+            JDBCUtils.closeResources(connection, preparedStatement, resultSet);
+            return students;
+        } catch (Exception e) {
+            logger.error("依据major和class模糊查询学生时出错：", e);
+            e.printStackTrace();
+            //关闭资源
+            JDBCUtils.closeResources(connection, preparedStatement, null);
+            return null;
+        }
+    }
 }

@@ -24,4 +24,9 @@ public interface ScoreDao {
 
     //查询某课程的所有学生成绩记录
     Map<Integer, Double> getAllScoresByCourseCode(String courseCode);
+
+    Map<String, Double> getScoreStatisticsByCourse(String courseCode);
+
+    Map<String, Double> getScoreStatisticsByCourse(String courseCode, Integer minScore, Integer maxScore,
+            Double avgScore);
 }

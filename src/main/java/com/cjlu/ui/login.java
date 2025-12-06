@@ -4,6 +4,8 @@
  */
 package com.cjlu.ui;
 
+import com.cjlu.controller.Impl.UserControllerImpl;
+import com.cjlu.entity.User;
 import com.cjlu.util.JDBCUtils;
 
 import javax.swing.JOptionPane;
@@ -108,61 +110,55 @@ public class login extends javax.swing.JFrame {
         Username_Formatted_Field.getAccessibleContext().setAccessibleName("");
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }
 
-    private void Password_Password_FieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Password_Password_FieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_Password_Password_FieldActionPerformed
+    //创建UserControllerImpl对象
+    UserControllerImpl userController = new UserControllerImpl();
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:                            
-    // 点击Register按钮，打开注册界面，关闭当前登录界面
-    new Register().setVisible(true); // 打开注册窗口
-//    this.dispose(); // 关闭登录窗口（可选：如果想保留登录窗口，注释这行）
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void Login_ButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        String username = Username_Formatted_Field.getText().trim();
-        String password = new String(Password_Password_Field.getPassword());
-
-        if (username.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "username and password not right！");
-            return;
-        }
-
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
+    //这个方法的功能是当密码输入框的内容发生变化时触发的事件处理方法
+    private void Password_Password_FieldActionPerformed(java.awt.event.ActionEvent evt) {
         try {
-            // 获取数据库连接（可能抛出异常）
-            conn = JDBCUtils.getConnection();
-            String sql = "SELECT password FROM users WHERE username = ?";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, username);
-            rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                String dbPassword = rs.getString("password");
-                if (dbPassword.equals(password)) {
-                    JOptionPane.showMessageDialog(this, "success！");
-                    new MainFrame(username).setVisible(true);
-                    this.dispose();
-                } else {
-                    JOptionPane.showMessageDialog(this, "fail password！");
-                    Password_Password_Field.setText("");
-                }
-            } else {
-                JOptionPane.showMessageDialog(this, "username not in the list！");
-                Username_Formatted_Field.setText("");
-                Password_Password_Field.setText("");
-            }
-        } catch (Exception e) { // 改为捕获所有Exception
+            // TODO add your handling code here:
+        } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "fail：" + e.getMessage());
-        } finally {
-            JDBCUtils.closeResources(conn, pstmt, rs);
         }
     }
+
+    //这个方法的功能是当用户点击注册按钮时触发的事件处理方法
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
+        try{
+            //打开注册界面
+            Register registerFrame = new Register();
+            registerFrame.setVisible(true);
+            this.dispose(); //关闭当前登录界面
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //这个方法的功能是当用户点击登录按钮时触发的事件处理方法
+    private void Login_ButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        try {
+            //获取用户输入的用户名和密码
+            String username = Username_Formatted_Field.getText();
+            String password = new String(Password_Password_Field.getPassword());
+            //调用UserControllerImpl的login方法进行登录验证
+            boolean loginSuccess = userController.login(username, password);
+            if (loginSuccess) {
+                //登录成功，显示主界面
+                MainFrame mainFrame = new MainFrame();
+                mainFrame.setVisible(true);
+                this.dispose(); //关闭当前登录界面
+            } else {
+                //登录失败，显示错误提示
+                JOptionPane.showMessageDialog(this, "用户名或密码错误！", "登录失败", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
     /**
      * @param args the command line arguments
      */

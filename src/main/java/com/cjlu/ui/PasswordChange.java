@@ -99,6 +99,7 @@ public class PasswordChange extends javax.swing.JFrame {
         pack();
     }// </editor-fold>
 
+    //这个方法是txtPassword的事件处理方法
     private void txtPasswordActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
     }

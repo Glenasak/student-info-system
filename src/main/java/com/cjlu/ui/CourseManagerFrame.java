@@ -103,7 +103,8 @@ public class CourseManagerFrame extends javax.swing.JFrame {
         btnAddSave1 = new javax.swing.JButton();
         jLabel13 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        // 关闭本窗口时仅销毁该窗口，而不退出整个系统
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new java.awt.CardLayout());
 
         CardPanel1.setLayout(new java.awt.CardLayout());
@@ -505,6 +506,7 @@ public class CourseManagerFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }
 
+    //这个方法用于处理修改课程的保存按钮点击事件
     private void btnAddSave1ActionPerformed(java.awt.event.ActionEvent evt) {
         // 获取修改后的数据
         String courseId = txtCourseID1.getText().trim();
@@ -561,6 +563,7 @@ public class CourseManagerFrame extends javax.swing.JFrame {
         }
     }
 
+    //这个方法用于处理添加课程界面的返回按钮点击事件
     private void btnAddBackActionPerformed(java.awt.event.ActionEvent evt) {
         CardLayout cl = (CardLayout) CardPanel1.getLayout();
         cl.show(CardPanel1, "list"); // 切回课程列表卡片
@@ -577,6 +580,7 @@ public class CourseManagerFrame extends javax.swing.JFrame {
         txtCourseSemester.setText("");
     }
 
+    //这个方法用于处理课程列表界面的修改按钮点击事件
     private void btnListUpdateActionPerformed(java.awt.event.ActionEvent evt) {
         // 校验是否选中行
         int selectedRow = TableCourse.getSelectedRow();
@@ -611,11 +615,13 @@ public class CourseManagerFrame extends javax.swing.JFrame {
         cl.show(CardPanel1, "update"); // 切回课程列表卡片
     }
 
+    //这个方法用于处理修改课程界面的返回按钮点击事件
     private void btnAddBack1ActionPerformed(java.awt.event.ActionEvent evt) {
         CardLayout cl = (CardLayout) CardPanel1.getLayout();
         cl.show(CardPanel1, "list"); // 切回课程列表卡片
     }
 
+    //这个方法用于处理课程列表界面的搜索按钮点击事件
     private void btnListCheckActionPerformed(java.awt.event.ActionEvent evt) {
         String keyword = jTextField1.getText().trim();
         if (courseController.isEmpty(keyword)) {
@@ -647,6 +653,7 @@ public class CourseManagerFrame extends javax.swing.JFrame {
         }
     }
 
+    //这个方法用于处理课程列表界面的删除按钮点击事件
     private void btnListDeleteActionPerformed(java.awt.event.ActionEvent evt) {
         int selectedRow = TableCourse.getSelectedRow();
         if (selectedRow == -1) {
@@ -674,6 +681,7 @@ public class CourseManagerFrame extends javax.swing.JFrame {
         }
     }
 
+    // 刷新表格数据的方法
     private void refreshTable(List<Map<String, Object>> list) {
         DefaultTableModel model = (DefaultTableModel) TableCourse.getModel();
         model.setRowCount(0);
@@ -689,6 +697,7 @@ public class CourseManagerFrame extends javax.swing.JFrame {
             }
         }
     }
+
 
     /**
      * @param args the command line arguments

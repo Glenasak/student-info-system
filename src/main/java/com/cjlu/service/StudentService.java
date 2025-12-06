@@ -1,5 +1,7 @@
 package com.cjlu.service;
 
+import java.util.List;
+
 import com.cjlu.entity.Student;
 
 public interface StudentService {
@@ -67,5 +69,9 @@ public interface StudentService {
 
     //根据学生信息生成报表（示例方法，具体实现可根据需求调整）
     public byte[] generateStudentReport();
+
+
+    //根据专业和班级查询学生信息
+    List<Student> findStudentsByMajorAndClass(String major, String className);
     
 }

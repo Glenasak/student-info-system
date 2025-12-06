@@ -18,9 +18,15 @@ public class StudentServiceImpl implements StudentService {
     //数据访问对象
     private StudentDaoImpl studentDao = new StudentDaoImpl();
 
+    //添加学生
     @Override
     public void addStudent(Student student) {
         try {
+            //检查student表是否存在
+            if (!studentDao.isStudentTableExists()) {
+                studentDao.createStudentTable();
+                logger.info("学生表不存在，已创建学生表");
+            }
             studentDao.addStudent(student);
             logger.info("添加学生成功: {}", student);
         } catch (Exception e) {
@@ -72,6 +78,11 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<Student> getAllStudents() {
        try {
+            //检查student表是否存在
+            if (!studentDao.isStudentTableExists()) {
+                studentDao.createStudentTable();
+                logger.info("学生表不存在，已创建学生表");
+            }
             List<Student> students = studentDao.getAllStudents();
             logger.info("查询所有学生成功");
             return students;
@@ -189,4 +200,34 @@ public class StudentServiceImpl implements StudentService {
         throw new UnsupportedOperationException("Unimplemented method 'generateStudentReport'");
     }
 
+    //这个方法的功能是根据姓名模糊查询学生
+    public List<Student> searchStudentsByName(String name) {
+        try {
+            return studentDao.searchStudentsByName(name);
+        } catch (Exception e) {
+            logger.error("根据姓名模糊查询学生失败: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    //这个方法的功能是根据班级查询学生
+    public List<Student> getStudentsByClass(String className) {
+        try {
+            return studentDao.getStudentsByClass(className);
+        } catch (Exception e) {
+            logger.error("根据班级查询学生失败: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    //依据major和className模糊查询学生
+    @Override
+    public List<Student> findStudentsByMajorAndClass(String major, String className) {
+        try {
+            return studentDao.findStudentsByMajorAndClass(major, className);
+        } catch (Exception e) {
+            logger.error("依据major和className模糊查询学生失败: {}", e.getMessage());
+            return null;
+        }
+    }
 }

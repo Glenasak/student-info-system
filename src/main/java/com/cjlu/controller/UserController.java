@@ -1,5 +1,7 @@
 package com.cjlu.controller;
 
+import com.cjlu.entity.User;
+
 public interface UserController {
     //用户登录
     public boolean login(String userName,String password);
@@ -21,5 +23,9 @@ public interface UserController {
     public Integer getUserIdByName(String userName);
     //创建用户表
     public void createUserTable();
+    //更新用户信息
+    public boolean updateUser(User user);
+    //验证用户登录
+    boolean validateLogin(String username, String password);
     
 }

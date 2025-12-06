@@ -8,6 +8,11 @@
  * @author 孙心坚
  */
 package com.cjlu.ui;
+import com.cjlu.controller.StudentController;
+import com.cjlu.controller.Impl.StudentControllerImpl;
+import com.cjlu.controller.Impl.UserControllerImpl;
+import com.cjlu.entity.Student;
+import com.cjlu.entity.User;
 import com.cjlu.util.JDBCUtils;
 import java.awt.CardLayout;
 import java.sql.Connection;
@@ -34,38 +39,26 @@ public class MainFrame extends javax.swing.JFrame {
 
     // 加载学生数据（原方法保留）
     private void loadStudentData() {
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        model.setRowCount(0);
-
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-
+        StudentController studentController = new StudentControllerImpl();
         try {
-            conn = JDBCUtils.getConnection();
-            String sql = "SELECT * FROM students";
-            pstmt = conn.prepareStatement(sql);
-            rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-                Object[] row = {
-                    rs.getString("student_id"),
-                    rs.getString("name"),
-                    rs.getString("gender"),
-                    rs.getInt("age"),
-                    rs.getString("class_name"),
-                    rs.getString("phone"),
-                    rs.getString("major"),
-                    rs.getString("admission_date"),
-                    rs.getString("email")
-                };
-                model.addRow(row);
+            java.util.List<Student> students = studentController.getAllStudents();
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            model.setRowCount(0); // 清空现有数据
+            for (Student student : students) {
+                model.addRow(new Object[]{
+                    student.getStudentId(),
+                    student.getName(),
+                    student.getGender(),
+                    student.getAge(),
+                    student.getClassName(),
+                    student.getPhone(),
+                    student.getMajor(),
+                    student.getAdmissionDate(),
+                    student.getEmail()
+                });
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Failed to load student data" + e.getMessage());
-        } finally {
-            JDBCUtils.closeResources(conn, pstmt, rs);
+            JOptionPane.showMessageDialog(this, "加载学生数据失败: " + e.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -561,7 +554,7 @@ jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
         jMenuBar1.add(jMenu3);
 
         jMenu8.setText("username");
-        jMenuItem5.setText("name");
+        jMenuItem5.setText(userController.getUserByCredentials());
         jMenu8.add(jMenuItem5);
         jMenuBar1.add(jMenu8);
 
@@ -572,72 +565,43 @@ jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
 
 
     // ---------------- 学生管理相关事件 ----------------
+
+    //创建Controller对象
+    UserControllerImpl userController = new UserControllerImpl();
+    StudentControllerImpl studentController = new StudentControllerImpl();
     // 密码修改功能
 private void passwordChangeActionPerformed(java.awt.event.ActionEvent evt) {
-    // 1. 检查是否有登录用户
-    if (currentLoginUser == null || currentLoginUser.trim().isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Please log in first!");
-        return;
-    }
+    // 获取当前登录用户信息
 
-    // 2. 弹出对话框获取原密码、新密码
-    String oldPwd = JOptionPane.showInputDialog(this, "Please enter old password:", "Password Change", JOptionPane.PLAIN_MESSAGE);
-    if (oldPwd == null || oldPwd.trim().isEmpty()) {
+    String username = userController.getUserByCredentials();
+
+    // 弹出输入对话框，获取旧密码和新密码
+    String oldPassword = JOptionPane.showInputDialog(this, "Please enter your old password:");
+    if (oldPassword == null || oldPassword.isEmpty()) {
         JOptionPane.showMessageDialog(this, "Old password cannot be empty!");
         return;
     }
 
-    String newPwd = JOptionPane.showInputDialog(this, "Please enter new password:", "Password Change", JOptionPane.PLAIN_MESSAGE);
-    if (newPwd == null || newPwd.trim().isEmpty()) {
+    // 验证旧密码
+    User user = userController.getUserByUsername(username);
+    
+
+    // 弹出输入对话框，获取新密码
+    String newPassword = JOptionPane.showInputDialog(this, "Please enter your new password:");
+    if (newPassword == null || newPassword.isEmpty()) {
         JOptionPane.showMessageDialog(this, "New password cannot be empty!");
         return;
     }
 
-    String confirmPwd = JOptionPane.showInputDialog(this, "Please confirm new password:", "Password Change", JOptionPane.PLAIN_MESSAGE);
-    if (!newPwd.equals(confirmPwd)) {
-        JOptionPane.showMessageDialog(this, "New passwords do not match!");
-        return;
-    }
-
-    // 3. 从数据库校验原密码并更新新密码（假设用户表为 users，字段为 username 和 password）
-    Connection conn = null;
-    PreparedStatement pstmtCheck = null;
-    PreparedStatement pstmtUpdate = null;
-    ResultSet rs = null;
-    try {
-        conn = JDBCUtils.getConnection();
-        // 3.1 校验原密码是否正确
-        String checkSql = "SELECT password FROM users WHERE username = ?";
-        pstmtCheck = conn.prepareStatement(checkSql);
-        pstmtCheck.setString(1, currentLoginUser);
-        rs = pstmtCheck.executeQuery();
-        if (!rs.next()) {
-            JOptionPane.showMessageDialog(this, "User does not exist!");
-            return;
-        }
-        String dbPwd = rs.getString("password");
-        if (!dbPwd.equals(oldPwd)) { // 实际项目中建议加密存储，这里简化为明文对比
-            JOptionPane.showMessageDialog(this, "Old password is incorrect!");
-            return;
-        }
-
-        // 3.2 更新新密码
-        String updateSql = "UPDATE users SET password = ? WHERE username = ?";
-        pstmtUpdate = conn.prepareStatement(updateSql);
-        pstmtUpdate.setString(1, newPwd);
-        pstmtUpdate.setString(2, currentLoginUser);
-        int rows = pstmtUpdate.executeUpdate();
-        if (rows > 0) {
-            JOptionPane.showMessageDialog(this, "Password changed successfully!");
-        } else {
-            JOptionPane.showMessageDialog(this, "Failed to change password!");
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
-    } finally {
-        JDBCUtils.closeResources(conn, pstmtCheck, rs);
-        JDBCUtils.closeResources(null, pstmtUpdate, null); // 单独关闭update的Statement
+    // 更新密码
+    user.setPassword(newPassword);
+    boolean updateSuccess = userController.updateUser(user);
+    if (updateSuccess) {
+        JOptionPane.showMessageDialog(this, "Password updated successfully! Please log in again.");
+        this.dispose(); // 关闭主界面
+        new login().setVisible(true); // 返回登录界面
+    } else {
+        JOptionPane.showMessageDialog(this, "Failed to update password!");
     }
 }
     // 点击“添加学生”按钮：切换到添加卡片
@@ -677,57 +641,62 @@ private void passwordChangeActionPerformed(java.awt.event.ActionEvent evt) {
         studentCardLayout.show(jPanel4, "update");
     }
 
-    // 点击“删除学生”按钮（原逻辑保留）
+    // 点击“删除学生”按钮
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {
+        // 获取选中行
         int selectedRow = jTable1.getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Please select the row of the student you want to delete first!");
             return;
         }
+        // 获取学生编号
+        String studentId = jTable1.getValueAt(selectedRow, 0).toString();
 
-        String studentName = jTable1.getValueAt(selectedRow, 1).toString();
-        int confirm = JOptionPane.showConfirmDialog(this, "Are you sure you want to delete" + studentName + " ？");
-        if (confirm == JOptionPane.YES_OPTION) {
-            // 数据库删除操作（补充）
-            String studentId = jTable1.getValueAt(selectedRow, 0).toString();
-            Connection conn = null;
-            PreparedStatement pstmt = null;
-            try {
-                conn = JDBCUtils.getConnection();
-                String sql = "DELETE FROM students WHERE student_id = ?";
-                pstmt = conn.prepareStatement(sql);
-                pstmt.setString(1, studentId);
-                pstmt.executeUpdate();
-                ((DefaultTableModel) jTable1.getModel()).removeRow(selectedRow);
-                JOptionPane.showMessageDialog(this, "successfully delete");
-            } catch (Exception e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(this, "fail to delete" + e.getMessage());
-            } finally {
-                JDBCUtils.closeResources(conn, pstmt, null);
-            }
+        // 删除数据库中的学生记录
+        boolean deleteSuccess = studentController.deleteStudent(Integer.parseInt(studentId));
+        if (!deleteSuccess) {
+            JOptionPane.showMessageDialog(this, "Failed to delete student from database!");
+            return;
         }
+
+        //重新加载表格数据
+        loadStudentData();
+        JOptionPane.showMessageDialog(this, "Student deleted successfully!");
     }
 
     // 点击“查询学生”按钮（原逻辑保留）
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {
-        String keyword = JOptionPane.showInputDialog(this, "Please enter your student number or name to make the query:");
-        if (keyword == null || keyword.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "The query keyword cannot be empty!");
-            return;
-        }
-        keyword = keyword.trim().toLowerCase();
-
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        int rowCount = model.getRowCount();
-        for (int i = rowCount - 1; i >= 0; i--) {
-            String studentId = model.getValueAt(i, 0).toString().toLowerCase();
-            String studentName = model.getValueAt(i, 1).toString().toLowerCase();
-            if (!studentId.contains(keyword) && !studentName.contains(keyword)) {
-                model.removeRow(i);
+        try{
+            // 获取查询条件
+            String studentId = JOptionPane.showInputDialog(this, "Please enter the student ID to search for:");
+            if (studentId == null || studentId.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Student ID cannot be empty!");
+                return;
             }
+            // 查询数据库
+            Student student = studentController.getStudentById(Integer.parseInt(studentId.trim()));
+            if (student == null) {
+                JOptionPane.showMessageDialog(this, "No student found with the given ID!");
+                return;
+            }
+            // 更新表格显示查询结果
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            model.setRowCount(0); // 清空表格
+            model.addRow(new Object[]{
+                student.getStudentId(),
+                student.getName(),
+                student.getGender(),
+                student.getAge(),
+                student.getClassName(),
+                student.getPhone(),
+                student.getMajor(),
+                student.getAdmissionDate(),
+                student.getEmail()
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "An error occurred while searching for the student: " + e.getMessage());
         }
-        JOptionPane.showMessageDialog(this, "Query completed! A total of" + model.getRowCount() + " data");
     }
 
     // 点击“重置查询”按钮（原逻辑保留）
@@ -748,44 +717,40 @@ private void passwordChangeActionPerformed(java.awt.event.ActionEvent evt) {
         String major = txtMajor.getText().trim();
         String admissionDate = txtAdmissionDate.getText().trim();
         String email = txtEmail.getText().trim();
-
         // 非空校验
-        if (studentId.isEmpty() || name.isEmpty() || gender.isEmpty() || age.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Student number, name, gender and age cannot be left blank!");
+        if (name.isEmpty() || gender.isEmpty() || age.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Name, gender and age cannot be left blank!");
             return;
         }
+        // 使用Controller插入数据库
+        Student newStudent = new Student();
+        newStudent.setStudentId(studentId);
+        newStudent.setName(name);
+        newStudent.setGender(gender);
+        newStudent.setAge(Integer.parseInt(age));
+        newStudent.setClassName(className);
+        newStudent.setPhone(phone);
+        newStudent.setMajor(major);
+        newStudent.setAdmissionDate(null);
+        newStudent.setEmail(email);
+        studentController.addStudent(newStudent);
+        loadStudentData();
+        JOptionPane.showMessageDialog(this, "Student added successfully!");
 
-        // 插入数据库
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        try {
-            conn = JDBCUtils.getConnection();
-            String sql = "INSERT INTO students (student_id, name, gender, age, class_name, phone, major, admission_date, email) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, studentId);
-            pstmt.setString(2, name);
-            pstmt.setString(3, gender);
-            pstmt.setInt(4, Integer.parseInt(age));
-            pstmt.setString(5, className);
-            pstmt.setString(6, phone);
-            pstmt.setString(7, major);
-            pstmt.setString(8, admissionDate);
-            pstmt.setString(9, email);
-            pstmt.executeUpdate();
+        // 切回列表卡片
+        studentCardLayout.show(jPanel4, "list");
 
-            // 更新表格
-            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-            model.addRow(new Object[]{studentId, name, gender, Integer.parseInt(age), className, phone, major, admissionDate, email});
-            JOptionPane.showMessageDialog(this, "successfully added");
+        // 清空添加表单
+        txtStudentID.setText("");
+        txtName.setText("");
+        txtGender.setText("");
+        txtAge.setText("");
+        txtClassName.setText("");
+        txtPhone.setText("");
+        txtMajor.setText("");
+        txtAdmissionDate.setText("");
+        txtEmail.setText("");
 
-            // 切回列表卡片
-            studentCardLayout.show(jPanel4, "list");
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "successfully faild：" + e.getMessage());
-        } finally {
-            JDBCUtils.closeResources(conn, pstmt, null);
-        }
     }
 
     // 点击“添加学生-返回”按钮：切回列表卡片
@@ -805,52 +770,40 @@ private void passwordChangeActionPerformed(java.awt.event.ActionEvent evt) {
         String major = txtMajor1.getText().trim();
         String admissionDate = txtAdmissionDate1.getText().trim();
         String email = txtEmail1.getText().trim();
-
         // 非空校验
         if (name.isEmpty() || gender.isEmpty() || age.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Name, gender and age cannot be left blank!");
-            return;
+            return; 
         }
 
-        // 更新数据库
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        try {
-            conn = JDBCUtils.getConnection();
-            String sql = "UPDATE students SET name=?, gender=?, age=?, class_name=?, phone=?, major=?, admission_date=?, email=? WHERE student_id=?";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, name);
-            pstmt.setString(2, gender);
-            pstmt.setInt(3, Integer.parseInt(age));
-            pstmt.setString(4, className);
-            pstmt.setString(5, phone);
-            pstmt.setString(6, major);
-            pstmt.setString(7, admissionDate);
-            pstmt.setString(8, email);
-            pstmt.setString(9, studentId);
-            pstmt.executeUpdate();
+        // 使用Controller更新数据库
+        Student updatedStudent = new Student();
+        updatedStudent.setStudentId(studentId);
+        updatedStudent.setName(name);
+        updatedStudent.setGender(gender);
+        updatedStudent.setAge(Integer.parseInt(age));
+        updatedStudent.setClassName(className);
+        updatedStudent.setPhone(phone);
+        updatedStudent.setMajor(major);
+        updatedStudent.setAdmissionDate(null);
+        updatedStudent.setEmail(email);
+        studentController.updateStudent(updatedStudent);
+        loadStudentData();
+        JOptionPane.showMessageDialog(this, "Student updated successfully!");
+        // 切回列表卡片
+        studentCardLayout.show(jPanel4, "list");
 
-            // 更新表格选中行
-            int selectedRow = jTable1.getSelectedRow();
-            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-            model.setValueAt(name, selectedRow, 1);
-            model.setValueAt(gender, selectedRow, 2);
-            model.setValueAt(Integer.parseInt(age), selectedRow, 3);
-            model.setValueAt(className, selectedRow, 4);
-            model.setValueAt(phone, selectedRow, 5);
-            model.setValueAt(major, selectedRow, 6);
-            model.setValueAt(admissionDate, selectedRow, 7);
-            model.setValueAt(email, selectedRow, 8);
-            JOptionPane.showMessageDialog(this, "chaged success");
+        // 清空修改表单
+        txtStudentID1.setText("");
+        txtName1.setText("");
+        txtGender1.setText("");
+        txtAge1.setText("");
+        txtClassName1.setText("");
+        txtPhone1.setText("");
+        txtMajor1.setText("");
+        txtAdmissionDate1.setText("");
+        txtEmail1.setText("");
 
-            // 切回列表卡片
-            studentCardLayout.show(jPanel4, "list");
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "chaged failed" + e.getMessage());
-        } finally {
-            JDBCUtils.closeResources(conn, pstmt, null);
-        }
     }
 
     // 点击“修改学生-返回”按钮：切回列表卡片
@@ -858,20 +811,25 @@ private void passwordChangeActionPerformed(java.awt.event.ActionEvent evt) {
         studentCardLayout.show(jPanel4, "list");
     }
     // ---------------- 其他事件（原逻辑保留） ----------------
+
+    // 退出系统
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {
         System.exit(0);
     }
 
+    // 课程管理
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {
         CourseManagerFrame courseFrame = new CourseManagerFrame();
         courseFrame.setVisible(true);
     }
 
+    // 成绩管理
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {
         ScoreManagerJFrame scoreFrame = new ScoreManagerJFrame();
         scoreFrame.setVisible(true);
     }
 
+    // 统计管理
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {
         StatisticManageFrame statisticFrame = new StatisticManageFrame();
         statisticFrame.setVisible(true);

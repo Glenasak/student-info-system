@@ -1,6 +1,7 @@
 package com.cjlu.controller.Impl;
 
 import com.cjlu.controller.UserController;
+import com.cjlu.entity.User;
 import com.cjlu.service.impl.UserServiceImpl;
 import org.slf4j.*;
 
@@ -121,6 +122,49 @@ public class UserControllerImpl implements UserController {
     public void createUserTable() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'createUserTable'");
+    }
+
+    public User getUserByUsername(String username) {
+        try {
+            return userService.getUserByUsername(username);
+        } catch (Exception e) {
+            logger.error("通过用户名获取用户信息失败，用户名：{}，错误信息：{}", username, e.getMessage());
+            return null;
+        }
+    }
+
+    //更新用户信息方法
+    @Override
+    public boolean updateUser(User user) {
+        try {
+            userService.updateUser(user);
+            logger.info("用户信息更新成功，用户ID：{}", user.getUserId());
+            return true;
+        } catch (Exception e) {
+            logger.error("用户信息更新失败，用户ID：{}，错误信息：{}", user.getUserId(), e.getMessage());
+            return false;
+        }
+    }
+
+    //验证用户登录方法
+    @Override
+    public boolean validateLogin(String username, String password) {
+        try {
+            return userService.validateLogin(username, password);
+        } catch (Exception e) {
+            logger.error("用户登录验证失败，用户名：{}，错误信息：{}", username, e.getMessage());
+            return false;
+        }
+    }
+
+    //通过登录凭证获取用户信息
+    public String getUserByCredentials() {
+        try{
+            return userService.getUserByCredentials();
+        } catch (Exception e) {
+            logger.error("获取当前用户信息失败，错误信息：{}", e.getMessage());
+            return null;
+        }
     }
 
 }

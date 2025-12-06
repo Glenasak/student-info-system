@@ -244,4 +244,48 @@ public class ScoreDaoImpl implements ScoreDao{
         }
     }
 
+    //依据课程名称和最高分和最低分和平均分模糊查询
+    @Override
+    public Map<String, Double> getScoreStatisticsByCourse(String courseCode) {
+        try{
+            //获取数据库连接
+            connection = com.cjlu.util.JDBCUtils.getConnection();
+            //查询某课程成绩统计的SQL语句
+            String querySQL = "SELECT MAX(score) AS max_score, MIN(score) AS min_score, AVG(score) AS avg_score " +
+                              "FROM scores WHERE course_code = ?";
+            //创建预编译语句对象
+            preparedStatement = connection.prepareStatement(querySQL);
+            preparedStatement.setString(1, courseCode);
+            //执行查询操作
+            var resultSet = preparedStatement.executeQuery();
+            Map<String, Double> statisticsMap = new java.util.HashMap<>();
+            if(resultSet.next()){
+                double maxScore = resultSet.getDouble("max_score");
+                double minScore = resultSet.getDouble("min_score");
+                double avgScore = resultSet.getDouble("avg_score");
+                statisticsMap.put("max_score", maxScore);
+                statisticsMap.put("min_score", minScore);
+                statisticsMap.put("avg_score", avgScore);
+                return statisticsMap;
+            }else{
+                logger.info("未找到课程代码={}的成绩记录。", courseCode);
+                return null;
+            }
+        }catch(Exception e){
+            logger.error("获取课程成绩统计时出错：", e);
+            e.printStackTrace();
+            logger.error("获取课程成绩统计时出错：{}", e.getMessage());
+            return null;
+        }finally{
+            //关闭资源
+            com.cjlu.util.JDBCUtils.closeResources(connection, preparedStatement, null);
+        }
+    }
+
+    @Override
+    public Map<String, Double> getScoreStatisticsByCourse(String courseCode, Integer minScore, Integer maxScore,
+            Double avgScore) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getScoreStatisticsByCourse'");
+    }
 }

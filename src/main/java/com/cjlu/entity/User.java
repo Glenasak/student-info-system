@@ -64,4 +64,8 @@ public class User {
         this.creatTime = creatTime;
     }
 
+    public String getUsername() {
+        return userName;
+    }
+
 }

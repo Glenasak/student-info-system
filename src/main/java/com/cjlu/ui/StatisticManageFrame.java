@@ -6,6 +6,8 @@ package com.cjlu.ui;
  */
 import java.awt.CardLayout;
 
+import com.cjlu.controller.Impl.StudentControllerImpl;
+
 /**
  *
  * @author 24825
@@ -69,7 +71,8 @@ public class StatisticManageFrame extends javax.swing.JFrame {
         jLabel10 = new javax.swing.JLabel();
         txtFailRate = new javax.swing.JTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        // 关闭统计窗口时只销毁当前窗口，而不退出整个系统
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         getContentPane().setLayout(new java.awt.CardLayout());
 
         StatisticManage.setLayout(new java.awt.CardLayout());
@@ -153,6 +156,11 @@ public class StatisticManageFrame extends javax.swing.JFrame {
         StudentConditionPanel.add(MatchClass);
 
         btnStudentCheck.setText("Check");
+        btnStudentCheck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnStudentCheckActionPerformed(evt);
+            }
+        });
         StudentConditionPanel.add(btnStudentCheck);
 
         btnStudentBack.setText("Back");
@@ -209,6 +217,11 @@ public class StatisticManageFrame extends javax.swing.JFrame {
         ScoreConditionPanel.add(txtScoreCourse);
 
         CheckButton.setText("Check");
+        CheckButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CheckButtonActionPerformed(evt);
+            }
+        });
         ScoreConditionPanel.add(CheckButton);
 
         btnScoreBack.setText("Back");
@@ -254,28 +267,66 @@ public class StatisticManageFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>
 
+    //这个方法用于处理txtMaxScore的动作事件
     private void txtMaxScoreActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
     }
 
+    //这个方法用于处理jButton1的动作事件
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
         CardLayout cl = (CardLayout) StatisticManage.getLayout();
         cl.show(StatisticManage, "Student");
     }
 
+    //这个方法用于处理jButton2的动作事件
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
         CardLayout cl = (CardLayout) StatisticManage.getLayout();
         cl.show(StatisticManage, "Score");
     }
 
+    //这个方法用于处理btnStudentBack的动作事件
     private void btnStudentBackActionPerformed(java.awt.event.ActionEvent evt) {
         CardLayout cl = (CardLayout)StatisticManage .getLayout();
         cl.show(StatisticManage, "Main"); // 切回主卡片
     }
 
+    //这个方法用于处理btnScoreBack的动作事件
     private void btnScoreBackActionPerformed(java.awt.event.ActionEvent evt) {
         CardLayout cl = (CardLayout)StatisticManage .getLayout();
         cl.show(StatisticManage, "Main"); // 切回主卡片        // TODO add your handling code here:
+    }
+
+    // 这个方法用于处理 btnStudentCheck 的动作事件
+    private void btnStudentCheckActionPerformed(java.awt.event.ActionEvent evt) {
+        StudentControllerImpl studentControllerImpl = new StudentControllerImpl();
+        //获取面板上的major和class
+        String major = MatchMajor.getText();
+        String className = MatchClass.getText();
+        //调用controller的方法获取学生列表
+        java.util.List<com.cjlu.entity.Student> students = studentControllerImpl.getStudentsByMajorAndClass(major, className);
+        //更新表格模型
+        String[] columnNames = {"student_id", "name", "gender", "age", "major", "class_name", "admission_date", "phone", "email"};
+        Object[][] data = new Object[students.size()][9];
+        for (int i = 0; i < students.size(); i++) {
+            com.cjlu.entity.Student student = students.get(i);
+            data[i][0] = student.getStudentId();
+            data[i][1] = student.getName();
+            data[i][2] = student.getGender();
+            data[i][3] = student.getAge();
+            data[i][4] = student.getMajor();
+            data[i][5] = student.getClassName();
+            data[i][6] = student.getAdmissionDate();
+            data[i][7] = student.getPhone();
+            data[i][8] = student.getEmail();
+        }
+        MatchStudentTable.setModel(new javax.swing.table.DefaultTableModel(data, columnNames));
+        //更新总人数显示
+        MatchStudentNumber.setText(String.valueOf(students.size()));
+    }
+
+    // 这个方法用于处理 CheckButton 的动作事件
+    private void CheckButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        // TODO add your handling code here:
     }
 
     /**

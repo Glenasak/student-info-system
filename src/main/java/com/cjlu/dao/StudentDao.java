@@ -41,4 +41,12 @@ public interface StudentDao {
     //创建学生表
     public void createStudentTable();
 
+    //根据班级查询学生信息
+    List<Student> getStudentsByClass(String className);
+
+    //检查学生表是否存在
+    public boolean isStudentTableExists();
+
+    List<Student> findStudentsByMajorAndClass(String major, String className);
+
 }

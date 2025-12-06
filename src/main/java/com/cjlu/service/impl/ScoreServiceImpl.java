@@ -64,4 +64,11 @@ public class ScoreServiceImpl implements ScoreService {
         throw new UnsupportedOperationException("Unimplemented method 'getScoresByCourseName'");
     }
 
+    //依据课程名称和分数范围查询成绩
+    @Override
+    public List<Scores> getScoresByCourseAndScoreRange(String courseName, double minScore, double maxScore) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getScoresByCourseAndScoreRange'");
+    }
+
 }

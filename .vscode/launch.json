@@ -4,7 +4,20 @@
     // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
+        {
+            "type": "java",
+            "name": "StudentTest",
+            "request": "launch",
+            "mainClass": "com.cjlu.StudentTest",
+            "projectName": "student-info-system"
+        },
+        {
+            "type": "java",
+            "name": "Register",
+            "request": "launch",
+            "mainClass": "com.cjlu.ui.Register",
+            "projectName": "student-info-system"
+        },
         {
             "type": "java",
             "name": "Current File",

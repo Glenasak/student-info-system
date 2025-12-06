@@ -5,7 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.*;;
+import org.slf4j.*;
+
+import com.cjlu.entity.User;;
 
 
 public class UserDaoImpl implements com.cjlu.dao.UserDao {
@@ -593,6 +595,44 @@ public class UserDaoImpl implements com.cjlu.dao.UserDao {
             //如果捕获异常，说明表不存在
             com.cjlu.util.JDBCUtils.closeResources(connection, preparedStatement);
             return false;
+        }
+    }
+
+    public User getUserByUsername(String username) {
+        try{
+            //获取数据库连接
+            connection = com.cjlu.util.JDBCUtils.getConnection();
+
+            //准备SQL语句
+            String sql = "SELECT * FROM users WHERE user_name = ?";
+
+            //执行查询
+            preparedStatement = (PreparedStatement) connection.prepareStatement(sql);
+            preparedStatement.setString(1, username);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            User user = null;
+            if(resultSet.next()) {
+                user = new User();
+                user.setUserId(resultSet.getInt("user_id"));
+                user.setUserName(resultSet.getString("user_name"));
+                user.setPassword(resultSet.getString("password"));
+                user.setRole(resultSet.getString("role"));
+            }
+
+            //关闭资源
+            com.cjlu.util.JDBCUtils.closeResources(connection, preparedStatement, resultSet);
+
+            return user;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            //日志
+            Logger logger = LoggerFactory.getLogger(UserDaoImpl.class);
+            logger.error("Error retrieving user for username: " + username, e);
+            //关闭资源
+            com.cjlu.util.JDBCUtils.closeResources(connection, preparedStatement);
+            return null;
         }
     }
 

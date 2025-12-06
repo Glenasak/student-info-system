@@ -3,6 +3,7 @@ package com.cjlu.service.impl;
 import com.cjlu.service.UserService;
 import org.slf4j.*;
 import com.cjlu.dao.impl.UserDaoImpl;
+import com.cjlu.entity.User;
 import com.cjlu.util.LocalFileLoginManager;
 public class UserServiceImpl implements UserService {
 
@@ -197,5 +198,47 @@ public class UserServiceImpl implements UserService {
             throw e;
         }
     }
+
+    public void updateUser(User user) {
+        try{
+            userDao.updateUser(user.getUserId(), user.getUserName(), user.getPassword(), user.getRole());
+            logger.info("更新用户信息成功: {}", user);
+        }catch(Exception e){
+            logger.error("更新用户信息失败: {}", user, e);
+            throw e;
+        }
+    }
+
+    //通过用户凭证获取用户信息
+    public String getUserByCredentials() {
+        try{
+            LocalFileLoginManager loginManager = new LocalFileLoginManager();
+            if(!loginManager.isLoggedIn()){
+                logger.warn("获取当前用户信息失败，用户未登录");
+                return null;
+            }
+            String currentUserName = loginManager.getCurrentUser().orElse(null);
+            if(currentUserName == null){
+                logger.warn("获取当前用户信息失败，用户名为空");
+                return null;
+            }
+            return currentUserName;
+        }catch(Exception e){
+            logger.error("获取当前用户信息失败", e);
+            return null;
+        }
+    }
+
+    public User getUserByUsername(String username) {
+        try{
+            User user = userDao.getUserByUsername(username);
+            logger.info("通过用户名获取用户信息成功: {}", username);
+            return user;
+        }catch(Exception e){
+            logger.error("通过用户名获取用户信息失败: {}", username, e);
+            throw e;
+        }
+    }
+
 
 }

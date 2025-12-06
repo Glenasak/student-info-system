@@ -12,25 +12,25 @@ import com.cjlu.dao.impl.StudentDaoImpl;
 
 public class StudentServiceImpl implements StudentService {
 
-    //日志记录器
+    // Logger instance
     private static final Logger logger = LoggerFactory.getLogger(StudentServiceImpl.class);
 
-    //数据访问对象
+    // Data access object
     private StudentDaoImpl studentDao = new StudentDaoImpl();
 
-    //添加学生
+    // Add student
     @Override
     public void addStudent(Student student) {
         try {
-            //检查student表是否存在
+            // Ensure the student table exists
             if (!studentDao.isStudentTableExists()) {
                 studentDao.createStudentTable();
-                logger.info("学生表不存在，已创建学生表");
+                logger.info("Student table did not exist; created table automatically.");
             }
             studentDao.addStudent(student);
-            logger.info("添加学生成功: {}", student);
+            logger.info("Student created successfully: {}", student);
         } catch (Exception e) {
-            logger.error("添加学生失败: {}", student, e);
+            logger.error("Failed to create student: {}", student, e);
             throw e;
         }
     }
@@ -39,9 +39,9 @@ public class StudentServiceImpl implements StudentService {
     public void deleteStudentById(Integer studentId) {
         try {
             studentDao.deleteStudent(studentId);
-            logger.info("删除学生成功: {}", studentId);
+            logger.info("Student deleted successfully: {}", studentId);
         } catch (Exception e) {
-            logger.error("删除学生失败: {}", studentId, e);
+            logger.error("Failed to delete student: {}", studentId, e);
             throw e;
         }
     }
@@ -50,9 +50,9 @@ public class StudentServiceImpl implements StudentService {
     public void updateStudentById(Student student) {
         try {
             studentDao.updateStudent(student);
-            logger.info("更新学生成功: {}", student);
+            logger.info("Student updated successfully: {}", student);
         } catch (Exception e) {
-            logger.error("更新学生失败: {}", student, e);
+            logger.error("Failed to update student: {}", student, e);
             throw e;
         }
     }
@@ -61,33 +61,32 @@ public class StudentServiceImpl implements StudentService {
     public Student getStudentById(Integer studentId) {
         try {
             Student student = studentDao.getStudentById(studentId);
-            logger.info("查询学生成功: {}", studentId);
+            logger.info("Student retrieved successfully: {}", studentId);
             return student;
         } catch (Exception e) {
-            logger.error("查询学生失败: {}", studentId, e);
+            logger.error("Failed to retrieve student: {}", studentId, e);
             throw e;
         }
     }
 
     @Override
     public Student getStudentByName(String name) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getStudentByName'");
     }
 
     @Override
     public List<Student> getAllStudents() {
        try {
-            //检查student表是否存在
+            // Ensure the student table exists
             if (!studentDao.isStudentTableExists()) {
                 studentDao.createStudentTable();
-                logger.info("学生表不存在，已创建学生表");
+                logger.info("Student table did not exist; created table automatically.");
             }
             List<Student> students = studentDao.getAllStudents();
-            logger.info("查询所有学生成功");
+            logger.info("Retrieved all students successfully.");
             return students;
         } catch (Exception e) {
-            logger.error("查询所有学生失败", e);
+            logger.error("Failed to retrieve all students", e);
             throw e;
         }
     }
@@ -96,10 +95,10 @@ public class StudentServiceImpl implements StudentService {
     public List<Student> getStudentsByMajor(String major) {
         try {
             List<Student> students = studentDao.findStudentsByMajor(major);
-            logger.info("根据专业查询学生成功: {}", major);
+            logger.info("Students retrieved successfully by major: {}", major);
             return students;
         } catch (Exception e) {
-            logger.error("根据专业查询学生失败: {}", major, e);
+            logger.error("Failed to retrieve students by major: {}", major, e);
             throw e;
         }
     }
@@ -108,10 +107,10 @@ public class StudentServiceImpl implements StudentService {
     public List<Student> getStudentsByClassName(String className) {
         try {
             List<Student> students = studentDao.findStudentsByClass(className);
-            logger.info("根据班级查询学生成功: {}", className);
+            logger.info("Students retrieved successfully by class: {}", className);
             return students;
         } catch (Exception e) {
-            logger.error("根据班级查询学生失败: {}", className, e);
+            logger.error("Failed to retrieve students by class: {}", className, e);
             throw e;
         }
     }
@@ -120,113 +119,101 @@ public class StudentServiceImpl implements StudentService {
     public List<Student> getStudentsByAgeRange(int minAge, int maxAge) {
         try {
             List<Student> students = studentDao.findStudentsByAgeRange(minAge, maxAge);
-            logger.info("根据年龄范围查询学生成功: {} - {}", minAge, maxAge);
+            logger.info("Students retrieved successfully by age range: {} - {}", minAge, maxAge);
             return students;
         } catch (Exception e) {
-            logger.error("根据年龄范围查询学生失败: {} - {}", minAge, maxAge, e);
+            logger.error("Failed to retrieve students by age range: {} - {}", minAge, maxAge, e);
             throw e;
         }
     }
 
     @Override
     public List<Student> getStudentsByAdmissionDateRange(Date startDate, Date endDate) {
-       // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getStudentsByAdmissionDateRange'");
     }
 
     @Override
     public Student getStudentByPhone(String phone) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getStudentByPhone'");
     }
 
     @Override
     public Student getStudentByEmail(String email) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getStudentByEmail'");
     }
 
     @Override
     public int getStudentCount() {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getStudentCount'");
     }
 
     @Override
     public List<Student> getStudentsByPage(int pageNumber, int pageSize) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getStudentsByPage'");
     }
 
     @Override
     public Map<String, Integer> getStudentCountByMajor() {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getStudentCountByMajor'");
     }
 
     @Override
     public Map<String, Integer> getStudentCountByClassName() {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getStudentCountByClassName'");
     }
 
     @Override
     public void addStudentsBatch(List<Student> students) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'addStudentsBatch'");
     }
 
     @Override
     public void deleteStudentsBatch(List<Integer> studentIds) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'deleteStudentsBatch'");
     }
 
     @Override
     public void updateStudentsBatch(List<Student> students) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'updateStudentsBatch'");
     }
 
     @Override
     public List<Student> searchStudentsByKeyword(String keyword) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'searchStudentsByKeyword'");
     }
 
     @Override
     public byte[] generateStudentReport() {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'generateStudentReport'");
     }
 
-    //这个方法的功能是根据姓名模糊查询学生
+    // Fuzzy search students by name
     public List<Student> searchStudentsByName(String name) {
         try {
             return studentDao.searchStudentsByName(name);
         } catch (Exception e) {
-            logger.error("根据姓名模糊查询学生失败: {}", e.getMessage());
+            logger.error("Failed to fuzzy search students by name: {}", e.getMessage());
             return null;
         }
     }
 
-    //这个方法的功能是根据班级查询学生
+    // Retrieve students by class name
     public List<Student> getStudentsByClass(String className) {
         try {
             return studentDao.getStudentsByClass(className);
         } catch (Exception e) {
-            logger.error("根据班级查询学生失败: {}", e.getMessage());
+            logger.error("Failed to retrieve students by class: {}", e.getMessage());
             return null;
         }
     }
 
-    //依据major和className模糊查询学生
+    // Fuzzy search students by major and class name
     @Override
     public List<Student> findStudentsByMajorAndClass(String major, String className) {
         try {
             return studentDao.findStudentsByMajorAndClass(major, className);
         } catch (Exception e) {
-            logger.error("依据major和className模糊查询学生失败: {}", e.getMessage());
+            logger.error("Failed to fuzzy search students by major and class: {}", e.getMessage());
             return null;
         }
     }

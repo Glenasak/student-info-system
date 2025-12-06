@@ -174,9 +174,9 @@ class ScoreControllerTest {
                     return id;
                 }
             }
-            throw new IllegalStateException("未能获取生成的学生ID");
+            throw new IllegalStateException("Failed to obtain generated student ID");
         } catch (Exception e) {
-            throw new RuntimeException("创建测试学生失败", e);
+            throw new RuntimeException("Failed to create test student", e);
         }
     }
 

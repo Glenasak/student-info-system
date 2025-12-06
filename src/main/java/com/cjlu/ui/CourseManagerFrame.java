@@ -452,7 +452,6 @@ public class CourseManagerFrame extends javax.swing.JFrame {
     }// </editor-fold>
 
     private void txtCourseIDActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
     }
 
     private void btnAddSaveActionPerformed(java.awt.event.ActionEvent evt) {
@@ -508,7 +507,6 @@ public class CourseManagerFrame extends javax.swing.JFrame {
 
 
     private void txtCourseID1ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
     }
 
     //这个方法用于处理修改课程的保存按钮点击事件

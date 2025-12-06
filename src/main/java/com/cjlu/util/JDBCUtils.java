@@ -7,61 +7,60 @@ import java.sql.ResultSet;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 public class JDBCUtils {
-    //数据库连接池对象
-    //好吧其实是我嫌弃一直打开关闭数据库这一种操作
+    // Database connection pool instance
     private static BasicDataSource dataSource;
 
-    //配珠置数据库连接池
-    static{
-    dataSource = new BasicDataSource();
-        // 1. 补充驱动类名（核心修复）
-        // 新版 Derby 的 jar 中通过 ServiceLoader 注册驱动，实际实现类为 AutoloadedDriver
+    // Configure the connection pool
+    static {
+        dataSource = new BasicDataSource();
+        // Supply the driver class name (core fix)
+        // Newer Derby JARs register the driver via ServiceLoader, and the implementation class is AutoloadedDriver
         dataSource.setDriverClassName("org.apache.derby.iapi.jdbc.AutoloadedDriver");
-    // 2. 原有 URL/用户名/密码配置
-    dataSource.setUrl("jdbc:derby:MyDB;create=true");
-    dataSource.setUsername("Admin"); 
-    dataSource.setPassword("123456");
-    // 3. 连接池参数（注意：DBCP 1.x 中 maxActive 对应最大连接数，无需修改）
-    dataSource.setMaxIdle(5);
-    dataSource.setMaxIdle(5);
-    dataSource.setMinIdle(2);
-    dataSource.setMaxWaitMillis(5000);
+        // Existing URL, username, and password configuration
+        dataSource.setUrl("jdbc:derby:MyDB;create=true");
+        dataSource.setUsername("Admin");
+        dataSource.setPassword("123456");
+        // Connection pool parameters (note: in DBCP 1.x, maxActive represents the maximum number of connections and does not need changes)
+        dataSource.setMaxIdle(5);
+        dataSource.setMaxIdle(5);
+        dataSource.setMinIdle(2);
+        dataSource.setMaxWaitMillis(5000);
     }
 
-    //获取数据库连接的方法
-    public static Connection getConnection() throws Exception{
+    // Method that retrieves a database connection
+    public static Connection getConnection() throws Exception {
         return dataSource.getConnection();
     }
 
-    //将资源归还到连接池
-    public static void closeResources(Connection connection,PreparedStatement preparedStatement,ResultSet resultSet){
-        //关闭结果集
-        try{
-            if(resultSet != null){
+    // Return resources to the pool
+    public static void closeResources(Connection connection, PreparedStatement preparedStatement, ResultSet resultSet) {
+        // Close the result set
+        try {
+            if (resultSet != null) {
                 resultSet.close();
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        //关闭预编译语句对象
-        try{
-            if(preparedStatement != null){
+        // Close the prepared statement
+        try {
+            if (preparedStatement != null) {
                 preparedStatement.close();
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        //关闭连接对象
-        try{
-            if(connection != null){
+        // Close the connection object
+        try {
+            if (connection != null) {
                 connection.close();
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    //在没有结果集的时候的关闭语句
+    // Close statement and connection when no result set is involved
     public static void closeResources(Connection conn, PreparedStatement pstmt) {
         closeResources(conn, pstmt, null);
     }

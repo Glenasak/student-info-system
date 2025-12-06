@@ -38,8 +38,8 @@ public class ScoreManagerJFrame extends javax.swing.JFrame {
                                 txtScoreID.setVisible(false);
                                 jLabel2.setVisible(false);
                                 txtCourseID1.setEditable(false);
-                                txtCourseSemester1.setToolTipText("yyyy-MM-dd 格式，可留空");
-                                txtExamDate.setToolTipText("yyyy-MM-dd 格式，可留空");
+                                txtCourseSemester1.setToolTipText("yyyy-MM-dd format, optional");
+                                txtExamDate.setToolTipText("yyyy-MM-dd format, optional");
                                 loadAllScores();
                                 showCard("list");
     }
@@ -480,13 +480,13 @@ public class ScoreManagerJFrame extends javax.swing.JFrame {
                         }
 
                         if (list == null || list.isEmpty()) {
-                                JOptionPane.showMessageDialog(this, "未找到匹配的成绩记录");
+                                JOptionPane.showMessageDialog(this, "No matching score records were found.");
                                 refreshTable(Collections.emptyList());
                         } else {
                                 refreshTable(list);
                         }
                 } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(this, "查询失败: " + ex.getMessage());
+                        JOptionPane.showMessageDialog(this, "Query failed: " + ex.getMessage());
                 }
         }
 
@@ -498,7 +498,7 @@ public class ScoreManagerJFrame extends javax.swing.JFrame {
     private void btnListUpdateActionPerformed(java.awt.event.ActionEvent evt) {
                 int selectedRow = TableScore.getSelectedRow();
                 if (selectedRow == -1) {
-                        JOptionPane.showMessageDialog(this, "请先在列表中选择需要修改的成绩记录");
+                        JOptionPane.showMessageDialog(this, "Please select the score you want to modify.");
                         return;
                 }
                 populateUpdateForm(selectedRow);
@@ -508,10 +508,10 @@ public class ScoreManagerJFrame extends javax.swing.JFrame {
         private void btnListDeleteActionPerformed(java.awt.event.ActionEvent evt) {
                 int selectedRow = TableScore.getSelectedRow();
                 if (selectedRow == -1) {
-                        JOptionPane.showMessageDialog(this, "请选择要删除的成绩！");
+                        JOptionPane.showMessageDialog(this, "Please select the score you want to delete.");
                         return;
                 }
-                int confirm = JOptionPane.showConfirmDialog(this, "确定删除？");
+                int confirm = JOptionPane.showConfirmDialog(this, "Delete this score?");
                 if (confirm == JOptionPane.YES_OPTION) {
                         try {
                                 DefaultTableModel model = (DefaultTableModel) TableScore.getModel();
@@ -521,13 +521,12 @@ public class ScoreManagerJFrame extends javax.swing.JFrame {
                                 loadAllScores();
                                 showCard("list");
                         } catch (Exception ex) {
-                                JOptionPane.showMessageDialog(this, "删除失败: " + ex.getMessage());
+                                JOptionPane.showMessageDialog(this, "Delete failed: " + ex.getMessage());
                         }
                 }
         }
 
     private void txtScoreIDActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
     }
 
     private void btnAddBackActionPerformed(java.awt.event.ActionEvent evt) {
@@ -542,7 +541,7 @@ public class ScoreManagerJFrame extends javax.swing.JFrame {
                 String examDateRaw = txtExamDate.getText().trim();
 
                 if (studentIdStr.isEmpty() || courseCode.isEmpty() || scoreStr.isEmpty()) {
-                        JOptionPane.showMessageDialog(this, "必填项不能为空！");
+                        JOptionPane.showMessageDialog(this, "Required fields cannot be empty.");
                         return;
                 }
                 try {
@@ -561,7 +560,7 @@ public class ScoreManagerJFrame extends javax.swing.JFrame {
                 } catch (IllegalArgumentException iae) {
                         JOptionPane.showMessageDialog(this, iae.getMessage());
                 } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(this, "保存失败: " + ex.getMessage());
+                        JOptionPane.showMessageDialog(this, "Save failed: " + ex.getMessage());
                 }
         }
 
@@ -582,7 +581,7 @@ public class ScoreManagerJFrame extends javax.swing.JFrame {
                 String examDateRaw = txtCourseSemester1.getText().trim();
 
                 if (scoreIdStr.isEmpty() || studentIdStr.isEmpty() || courseCode.isEmpty() || scoreStr.isEmpty()) {
-                        JOptionPane.showMessageDialog(this, "请完整填写需要更新的成绩信息");
+                        JOptionPane.showMessageDialog(this, "Please complete all score fields before updating.");
                         return;
                 }
                 try {
@@ -593,7 +592,7 @@ public class ScoreManagerJFrame extends javax.swing.JFrame {
 
                         Scores existing = controller.getById(scoreId);
                         if (existing == null) {
-                                JOptionPane.showMessageDialog(this, "未找到要更新的成绩记录");
+                                JOptionPane.showMessageDialog(this, "The score to update was not found.");
                                 return;
                         }
                         existing.setStudnetId(studentId);
@@ -608,7 +607,7 @@ public class ScoreManagerJFrame extends javax.swing.JFrame {
                 } catch (IllegalArgumentException iae) {
                         JOptionPane.showMessageDialog(this, iae.getMessage());
                 } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(this, "更新失败: " + ex.getMessage());
+                        JOptionPane.showMessageDialog(this, "Update failed: " + ex.getMessage());
                 }
         }
 
@@ -622,7 +621,7 @@ public class ScoreManagerJFrame extends javax.swing.JFrame {
                         List<Scores> allScores = controller.listAll();
                         refreshTable(allScores);
                 } catch (Exception ex) {
-                        JOptionPane.showMessageDialog(this, "加载成绩数据失败: " + ex.getMessage());
+                        JOptionPane.showMessageDialog(this, "Failed to load score data: " + ex.getMessage());
                 }
         }
 
@@ -662,7 +661,7 @@ public class ScoreManagerJFrame extends javax.swing.JFrame {
                 try {
                         return dateFormat.parse(raw.trim());
                 } catch (ParseException e) {
-                        throw new IllegalArgumentException("考试日期格式应为 yyyy-MM-dd");
+                        throw new IllegalArgumentException("Exam date must use yyyy-MM-dd format.");
                 }
         }
 

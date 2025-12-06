@@ -359,7 +359,6 @@ public class ScoreDaoImpl implements ScoreDao{
     @Override
     public Map<String, Double> getScoreStatisticsByCourse(String courseCode, Integer minScore, Integer maxScore,
             Double avgScore) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getScoreStatisticsByCourse'");
     }
 

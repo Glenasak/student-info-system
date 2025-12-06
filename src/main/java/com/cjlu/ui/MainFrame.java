@@ -1,11 +1,11 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
-
+ */
 
 /**
  *
- * @author 孙心坚
+ * @author Sun Xinjian
  */
 package com.cjlu.ui;
 import com.cjlu.controller.StudentController;
@@ -13,21 +13,17 @@ import com.cjlu.controller.Impl.StudentControllerImpl;
 import com.cjlu.controller.Impl.UserControllerImpl;
 import com.cjlu.entity.Student;
 import com.cjlu.entity.User;
-import com.cjlu.util.JDBCUtils;
 import java.awt.CardLayout;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class MainFrame extends javax.swing.JFrame {
     private String currentLoginUser;
-    private CardLayout studentCardLayout; // 学生管理标签页的CardLayout
+    private CardLayout studentCardLayout; // CardLayout for the student management tab
 
     public MainFrame() {
         initComponents();
-        loadStudentData(); // 初始化加载学生数据
+        loadStudentData(); // Load student data on startup
     }
 
     public MainFrame(String loginUser) {
@@ -37,13 +33,13 @@ public class MainFrame extends javax.swing.JFrame {
         loadStudentData();
     }
 
-    // 加载学生数据（原方法保留）
+    // Load student data (existing method retained)
     private void loadStudentData() {
         StudentController studentController = new StudentControllerImpl();
         try {
             java.util.List<Student> students = studentController.getAllStudents();
             DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-            model.setRowCount(0); // 清空现有数据
+            model.setRowCount(0); // Clear existing rows before inserting fresh data
             for (Student student : students) {
                 model.addRow(new Object[]{
                     student.getStudentId(),
@@ -58,7 +54,7 @@ public class MainFrame extends javax.swing.JFrame {
                 });
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "加载学生数据失败: " + e.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Failed to load student data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -79,8 +75,8 @@ public class MainFrame extends javax.swing.JFrame {
         jButton8 = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jButton9 = new javax.swing.JButton();
-        jPanel4 = new javax.swing.JPanel(); // 学生管理标签页（CardLayout容器）
-        ListCard = new javax.swing.JPanel(); // 学生列表卡片
+        jPanel4 = new javax.swing.JPanel(); // Student management tab (CardLayout container)
+        ListCard = new javax.swing.JPanel(); // Student list card
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jPanel5 = new javax.swing.JPanel();
@@ -148,7 +144,7 @@ public class MainFrame extends javax.swing.JFrame {
         setTitle("student information management system");
         setPreferredSize(new java.awt.Dimension(900, 700));
 
-        // 课程管理标签页
+        // Course management tab
         jButton7.setText("get into CourseManagerFrame");
         jButton7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -158,7 +154,7 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel1.add(jButton7);
         jTabbedPane1.addTab("course management", jPanel1);
 
-        // 成绩管理标签页
+        // Score management tab
         jButton8.setText("get into ScoreManagerFrame");
         jButton8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -168,7 +164,7 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel2.add(jButton8);
         jTabbedPane1.addTab("score management", jPanel2);
 
-        // 数据统计标签页
+        // Data statistics tab
         jButton9.setText("get into StatisticManageFrame");
         jButton9.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -178,11 +174,11 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel3.add(jButton9);
         jTabbedPane1.addTab("data statistics", jPanel3);
 
-        // ---------------- 学生管理标签页（CardLayout设置） ----------------
+        // ---------------- Student management tab (CardLayout setup) ----------------
         studentCardLayout = new CardLayout();
         jPanel4.setLayout(studentCardLayout);
 
-        // 1. 学生列表卡片（ListCard）
+        // 1. Student list card (ListCard)
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object[][]{},
             new String[]{
@@ -191,7 +187,7 @@ public class MainFrame extends javax.swing.JFrame {
         ));
         jScrollPane2.setViewportView(jTable1);
 
-        // 列表卡片的按钮布局
+        // Button layout for the list card
         jButton1.setText("Add students");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -273,7 +269,7 @@ public class MainFrame extends javax.swing.JFrame {
         );
         jPanel4.add(ListCard, "list");
 
-        // 2. 添加学生卡片（AddCard）
+        // 2. Add student card (AddCard)
         jLabel11.setFont(new java.awt.Font("Microsoft Tai Le", 1, 18));
         jLabel11.setText("Addstudent");
 
@@ -396,7 +392,7 @@ public class MainFrame extends javax.swing.JFrame {
         );
         jPanel4.add(AddCard, "add");
 
-        // 3. 修改学生卡片（UpdateCard）
+        // 3. Update student card (UpdateCard)
         jLabel21.setFont(new java.awt.Font("Microsoft Tai Le", 1, 18));
         jLabel21.setText("updateStudent");
 
@@ -518,17 +514,17 @@ public class MainFrame extends javax.swing.JFrame {
                     .addContainerGap(200, Short.MAX_VALUE))
         );
         jPanel4.add(UpdateCard, "update");
-        // ---------------- 学生管理标签页结束 ----------------
+        // ---------------- End student management tab ----------------
 
         jTabbedPane1.addTab("student_manage", jPanel4);
         getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
-        // 菜单栏
+        // Menu bar
         jMenu1.setText("system_manage");
         jMenuItem1.setText("password_change");
 jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
     public void actionPerformed(java.awt.event.ActionEvent evt) {
-        passwordChangeActionPerformed(evt); // 绑定自定义方法
+        passwordChangeActionPerformed(evt); // Delegate to the custom handler
     }
 });
         
@@ -564,36 +560,36 @@ jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
     // </editor-fold>
 
 
-    // ---------------- 学生管理相关事件 ----------------
+    // ---------------- Student management event handlers ----------------
 
-    //创建Controller对象
+    // Controller instances reused across actions
     UserControllerImpl userController = new UserControllerImpl();
     StudentControllerImpl studentController = new StudentControllerImpl();
-    // 密码修改功能
+    // Password change feature
 private void passwordChangeActionPerformed(java.awt.event.ActionEvent evt) {
-    // 获取当前登录用户信息
+    // Retrieve the current logged-in user
 
     String username = userController.getUserByCredentials();
 
-    // 弹出输入对话框，获取旧密码和新密码
+    // Prompt for the existing password
     String oldPassword = JOptionPane.showInputDialog(this, "Please enter your old password:");
     if (oldPassword == null || oldPassword.isEmpty()) {
         JOptionPane.showMessageDialog(this, "Old password cannot be empty!");
         return;
     }
 
-    // 验证旧密码
+    // Load the stored user record
     User user = userController.getUserByUsername(username);
     
 
-    // 弹出输入对话框，获取新密码
+    // Prompt for the new password
     String newPassword = JOptionPane.showInputDialog(this, "Please enter your new password:");
     if (newPassword == null || newPassword.isEmpty()) {
         JOptionPane.showMessageDialog(this, "New password cannot be empty!");
         return;
     }
 
-    // 更新密码
+    // Persist the updated password
     user.setPassword(newPassword);
     boolean updateSuccess = userController.updateUser(user);
     if (updateSuccess) {
@@ -604,10 +600,10 @@ private void passwordChangeActionPerformed(java.awt.event.ActionEvent evt) {
         JOptionPane.showMessageDialog(this, "Failed to update password!");
     }
 }
-    // 点击“添加学生”按钮：切换到添加卡片
+    // Show the add student card when the Add button is clicked
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
         studentCardLayout.show(jPanel4, "add");
-        // 清空添加表单
+        // Clear the add form
         txtStudentID.setText("");
         txtName.setText("");
         txtGender.setText("");
@@ -619,7 +615,7 @@ private void passwordChangeActionPerformed(java.awt.event.ActionEvent evt) {
         txtEmail.setText("");
     }
 
-    // 点击“修改学生”按钮：切换到修改卡片，并填充选中行数据
+    // Show the update card and populate it with the selected student's data
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
         int selectedRow = jTable1.getSelectedRow();
         if (selectedRow == -1) {
@@ -627,7 +623,7 @@ private void passwordChangeActionPerformed(java.awt.event.ActionEvent evt) {
             return;
         }
 
-        // 填充选中行数据到修改表单
+        // Populate the update form using the selected row
         txtStudentID1.setText(jTable1.getValueAt(selectedRow, 0).toString());
         txtName1.setText(jTable1.getValueAt(selectedRow, 1).toString());
         txtGender1.setText(jTable1.getValueAt(selectedRow, 2).toString());
@@ -641,47 +637,47 @@ private void passwordChangeActionPerformed(java.awt.event.ActionEvent evt) {
         studentCardLayout.show(jPanel4, "update");
     }
 
-    // 点击“删除学生”按钮
+    // Delete the selected student when the Delete button is clicked
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {
-        // 获取选中行
+        // Determine the selected row
         int selectedRow = jTable1.getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Please select the row of the student you want to delete first!");
             return;
         }
-        // 获取学生编号
+        // Obtain the student identifier
         String studentId = jTable1.getValueAt(selectedRow, 0).toString();
 
-        // 删除数据库中的学生记录
+        // Remove the student record from the database
         boolean deleteSuccess = studentController.deleteStudent(Integer.parseInt(studentId));
         if (!deleteSuccess) {
             JOptionPane.showMessageDialog(this, "Failed to delete student from database!");
             return;
         }
 
-        //重新加载表格数据
+        // Reload the full table data
         loadStudentData();
         JOptionPane.showMessageDialog(this, "Student deleted successfully!");
     }
 
-    // 点击“查询学生”按钮（原逻辑保留）
+    // Query a specific student by ID (original logic kept)
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {
         try{
-            // 获取查询条件
+            // Prompt for the search criterion
             String studentId = JOptionPane.showInputDialog(this, "Please enter the student ID to search for:");
             if (studentId == null || studentId.trim().isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Student ID cannot be empty!");
                 return;
             }
-            // 查询数据库
+            // Query the database
             Student student = studentController.getStudentById(Integer.parseInt(studentId.trim()));
             if (student == null) {
                 JOptionPane.showMessageDialog(this, "No student found with the given ID!");
                 return;
             }
-            // 更新表格显示查询结果
+            // Display only the matched student in the table
             DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-            model.setRowCount(0); // 清空表格
+            model.setRowCount(0); // Clear table contents
             model.addRow(new Object[]{
                 student.getStudentId(),
                 student.getName(),
@@ -699,15 +695,15 @@ private void passwordChangeActionPerformed(java.awt.event.ActionEvent evt) {
         }
     }
 
-    // 点击“重置查询”按钮（原逻辑保留）
+    // Reset the query view to show all students (original logic kept)
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {
         loadStudentData();
         JOptionPane.showMessageDialog(this, "The query has been reset and now all student data is displayed!");
     }
 
-    // 点击“添加学生-保存”按钮：插入数据库并更新表格
+    // Persist a new student when the Save button on the add card is clicked
     private void btnAddSaveActionPerformed(java.awt.event.ActionEvent evt) {
-        // 获取表单数据
+        // Gather form inputs
         String studentId = txtStudentID.getText().trim();
         String name = txtName.getText().trim();
         String gender = txtGender.getText().trim();
@@ -715,14 +711,13 @@ private void passwordChangeActionPerformed(java.awt.event.ActionEvent evt) {
         String className = txtClassName.getText().trim();
         String phone = txtPhone.getText().trim();
         String major = txtMajor.getText().trim();
-        String admissionDate = txtAdmissionDate.getText().trim();
         String email = txtEmail.getText().trim();
-        // 非空校验
+        // Validate required fields
         if (name.isEmpty() || gender.isEmpty() || age.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Name, gender and age cannot be left blank!");
             return;
         }
-        // 使用Controller插入数据库
+        // Insert the record using the controller
         Student newStudent = new Student();
         newStudent.setStudentId(studentId);
         newStudent.setName(name);
@@ -737,10 +732,10 @@ private void passwordChangeActionPerformed(java.awt.event.ActionEvent evt) {
         loadStudentData();
         JOptionPane.showMessageDialog(this, "Student added successfully!");
 
-        // 切回列表卡片
+        // Switch back to the list card
         studentCardLayout.show(jPanel4, "list");
 
-        // 清空添加表单
+        // Clear the add form inputs
         txtStudentID.setText("");
         txtName.setText("");
         txtGender.setText("");
@@ -753,14 +748,14 @@ private void passwordChangeActionPerformed(java.awt.event.ActionEvent evt) {
 
     }
 
-    // 点击“添加学生-返回”按钮：切回列表卡片
+    // Return to the list card when the add form Back button is pressed
     private void btnAddBackActionPerformed(java.awt.event.ActionEvent evt) {
         studentCardLayout.show(jPanel4, "list");
     }
 
-    // 点击“修改学生-更新”按钮：更新数据库并刷新表格
+    // Persist changes from the update form
     private void btnAddSave1ActionPerformed(java.awt.event.ActionEvent evt) {
-        // 获取表单数据
+        // Gather form inputs
         String studentId = txtStudentID1.getText().trim();
         String name = txtName1.getText().trim();
         String gender = txtGender1.getText().trim();
@@ -768,15 +763,14 @@ private void passwordChangeActionPerformed(java.awt.event.ActionEvent evt) {
         String className = txtClassName1.getText().trim();
         String phone = txtPhone1.getText().trim();
         String major = txtMajor1.getText().trim();
-        String admissionDate = txtAdmissionDate1.getText().trim();
         String email = txtEmail1.getText().trim();
-        // 非空校验
+        // Validate required fields
         if (name.isEmpty() || gender.isEmpty() || age.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Name, gender and age cannot be left blank!");
             return; 
         }
 
-        // 使用Controller更新数据库
+        // Update the record using the controller
         Student updatedStudent = new Student();
         updatedStudent.setStudentId(studentId);
         updatedStudent.setName(name);
@@ -790,10 +784,10 @@ private void passwordChangeActionPerformed(java.awt.event.ActionEvent evt) {
         studentController.updateStudent(updatedStudent);
         loadStudentData();
         JOptionPane.showMessageDialog(this, "Student updated successfully!");
-        // 切回列表卡片
+        // Switch back to the list card
         studentCardLayout.show(jPanel4, "list");
 
-        // 清空修改表单
+        // Clear the update form inputs
         txtStudentID1.setText("");
         txtName1.setText("");
         txtGender1.setText("");
@@ -806,30 +800,30 @@ private void passwordChangeActionPerformed(java.awt.event.ActionEvent evt) {
 
     }
 
-    // 点击“修改学生-返回”按钮：切回列表卡片
+    // Return to the list card when the update form Back button is pressed
     private void btnAddBack1ActionPerformed(java.awt.event.ActionEvent evt) {
         studentCardLayout.show(jPanel4, "list");
     }
-    // ---------------- 其他事件（原逻辑保留） ----------------
+    // ---------------- Other events (original logic kept) ----------------
 
-    // 退出系统
+    // Exit the application
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {
         System.exit(0);
     }
 
-    // 课程管理
+    // Launch the course management window
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {
         CourseManagerFrame courseFrame = new CourseManagerFrame();
         courseFrame.setVisible(true);
     }
 
-    // 成绩管理
+    // Launch the score management window
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {
         ScoreManagerJFrame scoreFrame = new ScoreManagerJFrame();
         scoreFrame.setVisible(true);
     }
 
-    // 统计管理
+    // Launch the statistics window
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {
         StatisticManageFrame statisticFrame = new StatisticManageFrame();
         statisticFrame.setVisible(true);

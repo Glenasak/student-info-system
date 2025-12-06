@@ -7,16 +7,16 @@ public class DBtest {
 
     public static void main(String[] args) {
     try {
-        // 打印运行时 classpath，帮助诊断是否包含 derby.jar
+        // Print the runtime classpath to help diagnose whether derby.jar is included
         System.out.println("runtime classpath: " + System.getProperty("java.class.path"));
-        // 手动加载 Derby 驱动类，验证是否存在
+        // Manually load the Derby driver class to verify its presence
         String resourcePath = "org/apache/derby/jdbc/EmbeddedDriver.class";
         System.out.println("System classloader: " + ClassLoader.getSystemClassLoader().getClass());
         System.out.println("Context classloader: " + Thread.currentThread().getContextClassLoader().getClass());
         System.out.println("SystemResource for driver: " + ClassLoader.getSystemResource(resourcePath));
         System.out.println("ContextResource for driver: " + Thread.currentThread().getContextClassLoader().getResource(resourcePath));
 
-        // 尝试通过 Class.forName 加载（先试常见的 EmbeddedDriver，再试 jar 中实际注册的 AutoloadedDriver）
+        // Attempt to load via Class.forName (try EmbeddedDriver first, then AutoloadedDriver registered in the JAR)
         try {
             Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
             System.out.println("Loaded org.apache.derby.jdbc.EmbeddedDriver");
@@ -25,17 +25,17 @@ public class DBtest {
                 Class.forName("org.apache.derby.iapi.jdbc.AutoloadedDriver");
                 System.out.println("Loaded org.apache.derby.iapi.jdbc.AutoloadedDriver");
             } catch (ClassNotFoundException e2) {
-                System.err.println("既找不到 EmbeddedDriver，也找不到 AutoloadedDriver");
+                System.err.println("Neither EmbeddedDriver nor AutoloadedDriver could be found");
                 throw e2;
             }
         }
         
-        // 再调用连接池获取连接
+        // Obtain a connection from the pool afterward
         Connection conn = JDBCUtils.getConnection();
-        System.out.println("数据库连接获取成功：" + conn);
+        System.out.println("Successfully obtained a database connection: " + conn);
         System.out.println(System.getProperty("java.class.path"));
     } catch (ClassNotFoundException e) {
-        System.err.println("驱动类找不到！请检查 derby.jar 是否引入");
+        System.err.println("Driver class not found. Please check whether derby.jar is included");
         e.printStackTrace();
     } catch (Exception e) {
         e.printStackTrace();

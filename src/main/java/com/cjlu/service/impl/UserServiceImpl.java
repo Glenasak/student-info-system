@@ -123,7 +123,6 @@ public class UserServiceImpl implements UserService {
     //验证用户邮箱方法
     @Override
     public boolean verifyUserEmail(int userId, String email) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'verifyUserEmail'");
     }
 

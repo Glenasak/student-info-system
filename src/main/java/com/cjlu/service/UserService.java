@@ -1,39 +1,39 @@
 package com.cjlu.service;
 
 public interface UserService {
-    //用户注册方法
+    // Register a new user
     void registerUser(String username, String password, String role) throws Exception;
 
-    //用户登录方法
+    // Log a user in
     boolean loginUser(String username, String password);
 
-    //用户信息更新方法
+    // Update user information
     void updateUserInfo(int userId, String newEmail, String newPassword);
 
-    //用户删除方法
+    // Delete a user
     void deleteUser(int userId);
 
-    //获取用户信息方法
+    // Retrieve user details
     String getUserInfo(int userId);
 
-    //列出所有用户方法
+    // List all users
     String listAllUsers();
 
-    //重置用户密码方法
+    // Reset a user password
     void resetUserPassword(int userId, String newPassword);
 
-    //验证用户邮箱方法
+    // Verify a user email address
     boolean verifyUserEmail(int userId, String email);
 
-    //用户登出方法
+    // Log a user out
     void logoutUser(int userId);
 
-    //检查用户名是否存在方法
+    // Check whether a username already exists
     boolean isUsernameExists(String username);
 
-    //验证登录凭据方法
+    // Validate login credentials
     boolean validateLogin(String userName, String password);
 
-    //创建用户表方法
+    // Create the user table when needed
     void createUserTable();
 }

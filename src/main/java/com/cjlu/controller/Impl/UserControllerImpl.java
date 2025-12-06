@@ -120,7 +120,6 @@ public class UserControllerImpl implements UserController {
     //这个直接写再UserService里了，这里留一个接口先
     @Override
     public void createUserTable() {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'createUserTable'");
     }
 

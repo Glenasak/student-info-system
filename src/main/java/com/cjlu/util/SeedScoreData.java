@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 
 /**
- * 快速向 Derby 数据库写入一批用于 UI 测试的学生和成绩数据。
+ * Quickly writes a batch of student and score data into the Derby database for UI testing.
  */
 public final class SeedScoreData {
 
@@ -54,7 +54,7 @@ public final class SeedScoreData {
         try {
             stmt.executeUpdate(sql);
         } catch (Exception ignore) {
-            // 表不存在等情况时忽略
+            // Ignore cases where the table does not exist
         }
     }
 
@@ -78,7 +78,7 @@ public final class SeedScoreData {
                 }
             }
         }
-        throw new IllegalStateException("无法获取学生主键");
+        throw new IllegalStateException("Unable to obtain the generated student primary key");
     }
 
     private static void insertScore(Connection conn, int studentId, String courseCode, double score, Date examDate)

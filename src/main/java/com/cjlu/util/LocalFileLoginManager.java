@@ -12,109 +12,110 @@ import java.util.Optional;
 import com.cjlu.dao.impl.UserDaoImpl;
 
 
-//这是一个通过本地文件维持用户登录状态的工具类
-//为什么使用本地文件呢？
-//因为我疯啦！！！
-//好吧其实是为了方便一键部署
+// Utility class that maintains the user login state via a local file
+// Why use a local file?
+// Because I was losing my mind!!!
+// Truthfully, it keeps one-click deployment simple
 public class LocalFileLoginManager {
 
-    // 定义登录文件名（直接存放在程序根目录）
+    // Define the login file name that resides in the application root directory
     private static final String LOGIN_FILE_NAME = "user_session.dat";
     
-    // 用于格式化登录时间的日期格式
+    // Date format used to format the login timestamp
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final Path loginFilePath;
 
     UserDaoImpl userDao = new UserDaoImpl();
 
-    //初始化登陆文件方法
+    // Initialize the login file helper
     public LocalFileLoginManager() {
-        // 获取程序运行的根目录（当前工作目录）
+        // Retrieve the application root directory (current working directory)
         String appRootDir = System.getProperty("user.dir");
-        // 构建登录文件完整路径（根目录 + 文件名）
+        // Build the full login file path (root directory + file name)
         this.loginFilePath = Path.of(appRootDir, LOGIN_FILE_NAME);
     }
 
-    //用户登录方法
+    // User login method
     public boolean login(String username, String password) {
-        // 基础参数校验
+        // Basic parameter validation
         if (username == null || username.trim().isEmpty() || password == null || password.trim().isEmpty()) {
-            System.err.println("用户名和密码不能为空！");
+            System.err.println("Username and password must not be empty!");
             return false;
         }
 
-        System.out.println("正在验证用户凭据...");
+        System.out.println("Validating user credentials...");
 
-        // 确认用户表存在，避免第一次启动时查询抛异常
+        // Ensure the user table exists to avoid exceptions on first launch
         if (!userDao.isUserTableExists()) {
             userDao.createUserTable();
         }
 
-        // 安全获取用户信息并进行凭据校验
+        // Securely retrieve user data and validate credentials
         Integer userId = userDao.getUserIdByName(username);
         String storedPassword = (userId != null) ? userDao.getUserPassword(userId) : null;
         boolean isCredentialValid = storedPassword != null && storedPassword.equals(password);
 
         if (isCredentialValid) {
             try {
-                // 直接在程序根目录创建文件
+                // Create the file directly under the application root directory
                 try (BufferedWriter writer = Files.newBufferedWriter(loginFilePath, StandardCharsets.UTF_8)) {
                     writer.write(username);
                     writer.newLine(); 
                     writer.write(LocalDateTime.now().format(DATE_FORMATTER));
                 }
                 
-                System.out.println("登录成功！登录文件已保存至: " + loginFilePath);
+                System.out.println("Login succeeded. The session file is saved at: " + loginFilePath);
                 return true;
             } catch (IOException e) {
-                System.err.println("创建登录文件失败: " + e.getMessage());
+                System.err.println("Failed to create the login file: " + e.getMessage());
                 return false;
             }
         } else {
-            System.out.println("用户名或密码错误，登录失败！");
+            System.out.println("Incorrect username or password. Login failed.");
             return false;
         }
     }
 
-    //检测用户是否已经登录
+    // Check whether the user is already logged in
     public boolean isLoggedIn() {
         return Files.exists(loginFilePath);
     }
 
-    //获取当前用户名
+    // Retrieve the current username
     public Optional<String> getCurrentUser() {
         if (!isLoggedIn()) {
             return Optional.empty();
         }
         try {
-            // 读取文件第一行（用户名）
+            // Read the first line of the file (the username)
             String username = Files.readAllLines(loginFilePath, StandardCharsets.UTF_8).get(0);
             return Optional.ofNullable(username.trim());
         } catch (IOException e) {
-            System.err.println("读取登录文件失败: " + e.getMessage());
+            System.err.println("Failed to read the login file: " + e.getMessage());
             return Optional.empty();
         }
     }
 
-    //退出登录
+    // Log out the current user
     public boolean logout() {
         if (isLoggedIn()) {
             try {
                 Files.delete(loginFilePath);
-                System.out.println("退出登录成功！登录文件已删除: " + loginFilePath);
+                System.out.println("Logout succeeded. The session file has been removed: " + loginFilePath);
                 return true;
             } catch (IOException e) {
-                System.err.println("删除登录文件失败: " + e.getMessage());
+                System.err.println("Failed to delete the login file: " + e.getMessage());
                 return false;
             }
         } else {
-            System.out.println("当前用户未登录，无需退出！");
-            return true; // 未登录状态视为退出成功
+            System.out.println("No user is currently logged in, so logout is not required.");
+            // Treat the not-logged-in state as a successful logout
+            return true;
         }
     }
 
-    //获取登录文件路径（用于调试）
+    // Retrieve the login file path (useful for debugging)
     public String getLoginFilePath() {
         return loginFilePath.toString();
     }

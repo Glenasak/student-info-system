@@ -6,9 +6,9 @@ public class ScoreTableTest {
     public static void main(String[] args) {
         ScoreDaoImpl dao = new ScoreDaoImpl();
         try {
-            System.out.println("准备创建 scores 表...");
+            System.out.println("Preparing to create the scores table...");
             dao.createScoreTable();
-            System.out.println("scores 表创建逻辑执行结束，请查看 derby.log 或数据库验证。");
+            System.out.println("Finished executing the scores table creation logic. Please check derby.log or verify in the database.");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -43,7 +43,7 @@ public class login extends javax.swing.JFrame {
         Login_Button = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE); // keep app alive when login frame closes
         setSize(new java.awt.Dimension(400, 250));
 
         Password_Password_Field.addActionListener(new java.awt.event.ActionListener() {

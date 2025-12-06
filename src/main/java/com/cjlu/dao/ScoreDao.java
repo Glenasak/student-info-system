@@ -1,6 +1,9 @@
 package com.cjlu.dao;
 
+import java.util.List;
 import java.util.Map;
+
+import com.cjlu.entity.Scores;
 
 public interface ScoreDao {
 
@@ -17,7 +20,7 @@ public interface ScoreDao {
     void updateScoreRecord(int studentId, String courseCode, double newScore);
 
     //根据学生ID和课程代码获取成绩记录
-    Integer getScoreRecord(int studentId, String courseCode);
+    Double getScoreRecord(int studentId, String courseCode);
 
     //查询某学生的所有成绩记录
     Map<String, Double> getAllScoresByStudentId(int studentId);
@@ -29,4 +32,6 @@ public interface ScoreDao {
 
     Map<String, Double> getScoreStatisticsByCourse(String courseCode, Integer minScore, Integer maxScore,
             Double avgScore);
+
+    List<Scores> findScoresByConditions(String major, String className, String courseCode) throws Exception;
 }

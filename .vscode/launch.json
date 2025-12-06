@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "ScoreTableTest",
+            "request": "launch",
+            "mainClass": "com.cjlu.ScoreTableTest",
+            "projectName": "student-info-system"
+        },
+        {
+            "type": "java",
             "name": "StudentTest",
             "request": "launch",
             "mainClass": "com.cjlu.StudentTest",

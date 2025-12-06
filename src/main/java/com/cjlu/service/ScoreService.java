@@ -28,4 +28,6 @@ public interface ScoreService {
     public List<Scores> getScoresByCourseName(String courseName);
 
     List<Scores> getScoresByCourseAndScoreRange(String courseName, double minScore, double maxScore);
+
+    List<Scores> findScoresByConditions(String major, String className, String courseCode);
 }

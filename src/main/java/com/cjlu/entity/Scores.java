@@ -6,17 +6,17 @@ public class Scores {
     //字段
     private Integer scoreId;
     private Integer studentId;
-    private Integer courseId;
-    private Integer score;
+    private String courseCode;
+    private Double score;
     private Date examDate;
 
     //构造函数
     public Scores(){}
 
-    public Scores(Integer scoreId,Integer studentId,Integer courseId,Integer score,Date examDate){
+    public Scores(Integer scoreId,Integer studentId,String courseCode,Double score,Date examDate){
         this.scoreId = scoreId;
         this.studentId = studentId;
-        this.courseId = courseId;
+        this.courseCode = courseCode;
         this.score = score;
         this.examDate = examDate;
     }
@@ -30,11 +30,11 @@ public class Scores {
         return studentId;
     }
 
-    public Integer getCourseId(){
-        return courseId;
+    public String getCourseCode(){
+        return courseCode;
     }
 
-    public Integer getScore(){
+    public Double getScore(){
         return score;
     }
 
@@ -51,11 +51,11 @@ public class Scores {
         this.studentId = studentId;
     }
 
-    public void setCourseId(Integer courseId){
-        this.courseId = courseId;
+    public void setCourseCode(String courseCode){
+        this.courseCode = courseCode;
     }
 
-    public void setScore(Integer score){
+    public void setScore(Double score){
         this.score = score;
     }
 

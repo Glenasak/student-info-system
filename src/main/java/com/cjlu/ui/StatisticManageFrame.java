@@ -5,8 +5,17 @@ package com.cjlu.ui;
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 import java.awt.CardLayout;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.List;
 
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
+import com.cjlu.controller.Impl.ScoreControllerImpl;
 import com.cjlu.controller.Impl.StudentControllerImpl;
+import com.cjlu.entity.Scores;
+import com.cjlu.entity.Student;
 
 /**
  *
@@ -14,11 +23,21 @@ import com.cjlu.controller.Impl.StudentControllerImpl;
  */
 public class StatisticManageFrame extends javax.swing.JFrame {
 
+    private static final double PASS_THRESHOLD = 60.0;
+
+    private final StudentControllerImpl studentController = new StudentControllerImpl();
+    private final ScoreControllerImpl scoreController = new ScoreControllerImpl();
+    private final SimpleDateFormat examDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
     /**
      * Creates new form StatisticManageFrame
      */
     public StatisticManageFrame() {
         initComponents();
+        examDateFormat.setLenient(false);
+        loadStudentData(null, null);
+        refreshScoreTable(Collections.emptyList());
+        clearScoreStatistics();
     }
 
     /**
@@ -71,8 +90,8 @@ public class StatisticManageFrame extends javax.swing.JFrame {
         jLabel10 = new javax.swing.JLabel();
         txtFailRate = new javax.swing.JTextField();
 
-        // 关闭统计窗口时只销毁当前窗口，而不退出整个系统
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        // 关闭统计窗口时仅隐藏窗口，保持系统运行
+        setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE);
         getContentPane().setLayout(new java.awt.CardLayout());
 
         StatisticManage.setLayout(new java.awt.CardLayout());
@@ -276,12 +295,16 @@ public class StatisticManageFrame extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
         CardLayout cl = (CardLayout) StatisticManage.getLayout();
         cl.show(StatisticManage, "Student");
+        loadStudentData(normalizeInput(MatchMajor.getText()), normalizeInput(MatchClass.getText()));
     }
 
     //这个方法用于处理jButton2的动作事件
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
         CardLayout cl = (CardLayout) StatisticManage.getLayout();
         cl.show(StatisticManage, "Score");
+        loadScoreData(normalizeInput(txtScoreMajor.getText()),
+                normalizeInput(txtScoreClass.getText()),
+                normalizeInput(txtScoreCourse.getText()));
     }
 
     //这个方法用于处理btnStudentBack的动作事件
@@ -298,35 +321,162 @@ public class StatisticManageFrame extends javax.swing.JFrame {
 
     // 这个方法用于处理 btnStudentCheck 的动作事件
     private void btnStudentCheckActionPerformed(java.awt.event.ActionEvent evt) {
-        StudentControllerImpl studentControllerImpl = new StudentControllerImpl();
-        //获取面板上的major和class
-        String major = MatchMajor.getText();
-        String className = MatchClass.getText();
-        //调用controller的方法获取学生列表
-        java.util.List<com.cjlu.entity.Student> students = studentControllerImpl.getStudentsByMajorAndClass(major, className);
-        //更新表格模型
-        String[] columnNames = {"student_id", "name", "gender", "age", "major", "class_name", "admission_date", "phone", "email"};
-        Object[][] data = new Object[students.size()][9];
-        for (int i = 0; i < students.size(); i++) {
-            com.cjlu.entity.Student student = students.get(i);
-            data[i][0] = student.getStudentId();
-            data[i][1] = student.getName();
-            data[i][2] = student.getGender();
-            data[i][3] = student.getAge();
-            data[i][4] = student.getMajor();
-            data[i][5] = student.getClassName();
-            data[i][6] = student.getAdmissionDate();
-            data[i][7] = student.getPhone();
-            data[i][8] = student.getEmail();
-        }
-        MatchStudentTable.setModel(new javax.swing.table.DefaultTableModel(data, columnNames));
-        //更新总人数显示
-        MatchStudentNumber.setText(String.valueOf(students.size()));
+        loadStudentData(normalizeInput(MatchMajor.getText()), normalizeInput(MatchClass.getText()));
     }
 
     // 这个方法用于处理 CheckButton 的动作事件
     private void CheckButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        loadScoreData(normalizeInput(txtScoreMajor.getText()),
+                normalizeInput(txtScoreClass.getText()),
+                normalizeInput(txtScoreCourse.getText()));
+    }
+
+    private void loadStudentData(String major, String className) {
+        List<Student> students;
+        try {
+            students = studentController.getStudentsByMajorAndClass(major, className);
+        } catch (RuntimeException ex) {
+            JOptionPane.showMessageDialog(this, "加载学生数据失败: " + ex.getMessage());
+            students = Collections.emptyList();
+        }
+        if (students == null) {
+            students = Collections.emptyList();
+        }
+        refreshStudentTable(students);
+    }
+
+    private void refreshStudentTable(List<Student> students) {
+        String[] columnNames = {"student_id", "name", "gender", "age", "major", "class_name", "admission_date", "phone", "email"};
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        if (students != null) {
+            for (Student student : students) {
+                if (student == null) {
+                    continue;
+                }
+                model.addRow(new Object[] {
+                        student.getStudentId(),
+                        student.getName(),
+                        student.getGender(),
+                        student.getAge(),
+                        student.getMajor(),
+                        student.getClassName(),
+                        formatDate(student.getAdmissionDate()),
+                        student.getPhone(),
+                        student.getEmail()
+                });
+            }
+        }
+        MatchStudentTable.setModel(model);
+        int total = students == null ? 0 : students.size();
+        MatchStudentNumber.setText(String.valueOf(total));
+    }
+
+    private void loadScoreData(String major, String className, String courseCode) {
+        List<Scores> scores;
+        try {
+            scores = scoreController.searchByConditions(major, className, courseCode);
+        } catch (RuntimeException ex) {
+            JOptionPane.showMessageDialog(this, "加载成绩数据失败: " + ex.getMessage());
+            scores = Collections.emptyList();
+        }
+        if (scores == null) {
+            scores = Collections.emptyList();
+        }
+        refreshScoreTable(scores);
+        updateScoreStatistics(scores);
+    }
+
+    private void refreshScoreTable(List<Scores> scores) {
+        String[] columnNames = {"score_id", "student_id", "course_id", "score", "exam_date"};
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        if (scores != null) {
+            for (Scores item : scores) {
+                if (item == null) {
+                    continue;
+                }
+                model.addRow(new Object[] {
+                        item.getScoreId(),
+                        item.getStudentId(),
+                        item.getCourseCode(),
+                        item.getScore(),
+                        formatDate(item.getExamDate())
+                });
+            }
+        }
+        MatchScoreTable.setModel(model);
+    }
+
+    private void updateScoreStatistics(List<Scores> scores) {
+        if (scores == null || scores.isEmpty()) {
+            clearScoreStatistics();
+            return;
+        }
+        double sum = 0.0;
+        Double max = null;
+        Double min = null;
+        int validCount = 0;
+        int failCount = 0;
+        for (Scores score : scores) {
+            if (score == null || score.getScore() == null) {
+                continue;
+            }
+            double value = score.getScore();
+            sum += value;
+            validCount++;
+            if (max == null || value > max) {
+                max = value;
+            }
+            if (min == null || value < min) {
+                min = value;
+            }
+            if (value < PASS_THRESHOLD) {
+                failCount++;
+            }
+        }
+        if (validCount == 0) {
+            clearScoreStatistics();
+            return;
+        }
+        double average = sum / validCount;
+        double failRatePercent = (double) failCount / validCount * 100.0;
+        txtAveScore.setText(String.format("%.2f", average));
+        txtMaxScore.setText(max == null ? "" : String.format("%.2f", max));
+        txtMinScore.setText(min == null ? "" : String.format("%.2f", min));
+        txtFailRate.setText(String.format("%.2f%%", failRatePercent));
+    }
+
+    private void clearScoreStatistics() {
+        txtAveScore.setText("");
+        txtMaxScore.setText("");
+        txtMinScore.setText("");
+        txtFailRate.setText("");
+    }
+
+    private String normalizeInput(String raw) {
+        if (raw == null) {
+            return null;
+        }
+        String trimmed = raw.trim();
+        return trimmed.isEmpty() ? null : trimmed;
+    }
+
+    private String formatDate(java.util.Date date) {
+        if (date == null) {
+            return "";
+        }
+        synchronized (examDateFormat) {
+            return examDateFormat.format(date);
+        }
     }
 
     /**

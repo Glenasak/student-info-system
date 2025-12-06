@@ -35,7 +35,7 @@ public class PasswordChange extends javax.swing.JFrame {
         txtRepeatPassword = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.HIDE_ON_CLOSE); // hide window without shutting app
         getContentPane().setLayout(new java.awt.CardLayout());
 
         jLabel3.setText("Username");

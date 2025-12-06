@@ -565,7 +565,6 @@ public class ScoreManagerJFrame extends javax.swing.JFrame {
         }
 
     private void txtCourseID1ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
     }
 
     private void btnAddBack1ActionPerformed(java.awt.event.ActionEvent evt) {

@@ -39,6 +39,7 @@ public class login extends javax.swing.JFrame {
         label1 = new java.awt.Label();
         label2 = new java.awt.Label();
         Login_Button = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setSize(new java.awt.Dimension(400, 250));
@@ -60,6 +61,13 @@ public class login extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setText("Register");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -74,8 +82,10 @@ public class login extends javax.swing.JFrame {
                     .addComponent(Username_Formatted_Field)
                     .addComponent(Password_Password_Field, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Login_Button, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(47, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
+                    .addComponent(Login_Button, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -90,7 +100,9 @@ public class login extends javax.swing.JFrame {
                         .addComponent(Password_Password_Field)
                         .addComponent(Login_Button))
                     .addComponent(label2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(128, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jButton1)
+                .addContainerGap(87, Short.MAX_VALUE))
         );
 
         Username_Formatted_Field.getAccessibleContext().setAccessibleName("");
@@ -101,6 +113,13 @@ public class login extends javax.swing.JFrame {
     private void Password_Password_FieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Password_Password_FieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_Password_Password_FieldActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:                            
+    // 点击Register按钮，打开注册界面，关闭当前登录界面
+    new Register().setVisible(true); // 打开注册窗口
+//    this.dispose(); // 关闭登录窗口（可选：如果想保留登录窗口，注释这行）
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     private void Login_ButtonActionPerformed(java.awt.event.ActionEvent evt) {
         String username = Username_Formatted_Field.getText().trim();
@@ -184,6 +203,7 @@ public class login extends javax.swing.JFrame {
     private javax.swing.JButton Login_Button;
     private javax.swing.JPasswordField Password_Password_Field;
     private javax.swing.JFormattedTextField Username_Formatted_Field;
+    private javax.swing.JButton jButton1;
     private java.awt.Label label1;
     private java.awt.Label label2;
     // End of variables declaration//GEN-END:variables

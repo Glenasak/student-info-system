@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -34,7 +33,7 @@ public class LocalFileLoginManager {
         // 获取程序运行的根目录（当前工作目录）
         String appRootDir = System.getProperty("user.dir");
         // 构建登录文件完整路径（根目录 + 文件名）
-        this.loginFilePath = Paths.get(appRootDir, LOGIN_FILE_NAME);
+        this.loginFilePath = Path.of(appRootDir, LOGIN_FILE_NAME);
     }
 
     //用户登录方法
@@ -86,7 +85,7 @@ public class LocalFileLoginManager {
         }
         try {
             // 读取文件第一行（用户名）
-            String username = Files.readAllLines(loginFilePath, StandardCharsets.UTF_8).get(0);
+            String username = Files.readAllLines(loginFilePath, StandardCharsets.UTF_8).getFirst();
             return Optional.ofNullable(username.trim());
         } catch (IOException e) {
             System.err.println("读取登录文件失败: " + e.getMessage());

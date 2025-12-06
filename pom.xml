@@ -12,7 +12,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>17</maven.compiler.release>
+        <maven.compiler.release>21</maven.compiler.release>
         <!-- 统一依赖版本，便于维护 -->
         <!-- 降级 Derby 以和当前 JDK 17 兼容（避免 UnsupportedClassVersionError） -->
         <derby.version>10.15.2.0</derby.version>
@@ -100,7 +100,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.13.0</version>
+                    <version>3.14.1</version>
                 </plugin>
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>

@@ -14,8 +14,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>21</maven.compiler.release>
         <!-- 统一依赖版本，便于维护 -->
-        <!-- 降级 Derby 以和当前 JDK 17 兼容（避免 UnsupportedClassVersionError） -->
-        <derby.version>10.15.2.0</derby.version>
+        <!-- Derby 10.17.1.0 adds tested support up to JDK 21 -->
+        <derby.version>10.17.1.0</derby.version>
         <dbcp2.version>2.9.0</dbcp2.version>
         <pool2.version>2.11.1</pool2.version>
         <slf4j.version>2.0.9</slf4j.version>

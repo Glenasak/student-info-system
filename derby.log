@@ -1,7 +1,7 @@
 ----------------------------------------------------------------
-Sun Dec 07 01:51:35 GMT+08:00 2025:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.17.1.0 - (1913217): instance a816c00e-019a-f4ca-63f4-00001e50f560 
-on database directory C:\我的文件\02工作\student-info-system-master\MyDB with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@6bc7c054 
+Sun Dec 07 09:34:06 GMT+08:00 2025:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.17.1.0 - (1913217): instance a816c00e-019a-f671-d39a-00001e591ea0 
+on database directory C:\我的文件\02工作\student-info-system-master\MyDB with class loader jdk.internal.loader.ClassLoaders$AppClassLoader@4aa298b7 
 Loaded from file:/C:/Users/q1506/.m2/repository/org/apache/derby/derby/10.17.1.0/derby-10.17.1.0.jar
 java.vendor=Oracle Corporation
 java.runtime.version=21.0.9+7-LTS-338
